@@ -96,7 +96,7 @@ public class BedrockCloud
 
                     Thread.sleep(200L);
                     builder.command("/bin/sh", "-c", "killall -9 php").start();
-                    builder.command("/bin/sh", "-c", "killall -9 java").start();
+                    builder.command("/bin/sh", "-c", "killall -9 java").start(); //INFO: This is needed to fix that not all services were stopped
                 } catch (InterruptedException | IOException e) {
                     BedrockCloud.getLogger().exception(e);
                 }

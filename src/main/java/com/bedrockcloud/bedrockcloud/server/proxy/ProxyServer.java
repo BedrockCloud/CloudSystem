@@ -176,7 +176,7 @@ public class ProxyServer
         } else {
             proxy.set("listener.motd", BedrockCloud.getConfig().getString("motd"));
         }
-        proxy.set("use_login_extras", true);
+        proxy.set("use_login_extras", false);
         proxy.set("replace_username_spaces", true);
         proxy.set("cloud-path", BedrockCloud.getCloudPath());
         proxy.save();

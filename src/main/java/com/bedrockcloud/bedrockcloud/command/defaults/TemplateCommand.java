@@ -25,7 +25,9 @@ public class TemplateCommand extends Command
                 }
                 for (final Template template : BedrockCloud.getTemplateProvider().templateMap.values()) {
                     if (template.getType() == 1) {
-                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: BEDROCK");
+                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: POCKETMINE");
+                    } else if (template.getType() == 2) {
+                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: NUKKIT");
                     }
                 }
             } else {

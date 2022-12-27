@@ -20,43 +20,40 @@ public class TemplateCommand extends Command
                 this.getLogger().info("§e»§r §7There are currently " + BedrockCloud.getTemplateProvider().templateMap.size() + " Templates online! §e«");
                 for (final Template template : BedrockCloud.getTemplateProvider().templateMap.values()) {
                     if (template.getType() == 0) {
-                        this.getLogger().info("§c\u27a4 §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance + " | Beta: " + template.isBeta  + " | TYPE: WATERDOGPE");
+                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance + " | Beta: " + template.isBeta  + " | TYPE: WATERDOGPE");
                     }
                 }
                 for (final Template template : BedrockCloud.getTemplateProvider().templateMap.values()) {
                     if (template.getType() == 1) {
-                        this.getLogger().info("§c\u27a4 §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: BEDROCK");
+                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: BEDROCK");
                     }
                 }
-            }
-            else {
+            } else {
                 BedrockCloud.getLogger().warning("Try to execute: template <list>");
             }
-        }
-        else {
+        } else {
             BedrockCloud.getLogger().warning("Try to execute: template <list>");
         }
+
         if (args.length != 1 && args.length != 0) {
             final String subcommand = args[0];
             if (subcommand.equalsIgnoreCase("start")) {
                 if (args.length == 2) {
                     final String templateName = args[1];
-                    final Template template2 = BedrockCloud.getTemplateProvider().getTemplate(templateName);
-                    if (template2 == null) {
+                    final Template template = BedrockCloud.getTemplateProvider().getTemplate(templateName);
+                    if (template == null) {
                         BedrockCloud.getLogger().error("This Template doesn't exist");
                         return;
                     }
-                    if (BedrockCloud.getTemplateProvider().isTemplateRunning(template2)) {
+                    if (BedrockCloud.getTemplateProvider().isTemplateRunning(template)) {
                         BedrockCloud.getLogger().error("The Template is already running!");
                         return;
                     }
-                    template2.start();
-                }
-                else {
+                    template.start();
+                } else {
                     BedrockCloud.getLogger().warning("Try to execute: template start <TemplateName>");
                 }
-            }
-            else if (subcommand.equalsIgnoreCase("stop")) {
+            } else if (subcommand.equalsIgnoreCase("stop")) {
                 if (args.length == 2) {
                     final String templateName = args[1];
                     final Template template2 = BedrockCloud.getTemplateProvider().getTemplate(templateName);
@@ -69,12 +66,10 @@ public class TemplateCommand extends Command
                         return;
                     }
                     template2.stop();
-                }
-                else {
+                } else {
                     BedrockCloud.getLogger().warning("Try to execute: template stop <TemplateName>");
                 }
-            }
-            else if (subcommand.equalsIgnoreCase("restart")) {
+            } else if (subcommand.equalsIgnoreCase("restart")) {
                 if (args.length == 2) {
                     final String templateName = args[1];
                     final Template template2 = BedrockCloud.getTemplateProvider().getTemplate(templateName);
@@ -90,30 +85,31 @@ public class TemplateCommand extends Command
                 } else {
                     BedrockCloud.getLogger().warning("Try to execute: template restart <TemplateName>");
                 }
-            }
-            else if (subcommand.equalsIgnoreCase("create")) {
+            } else if (subcommand.equalsIgnoreCase("create")) {
                 if (args.length == 3) {
                     if (args[2] != null) {
-                        if (args[2].equals("pocketmine")) {
-                            GroupAPI.createGroup(args[1], 1);
+                        switch (args[2]) {
+                            case "waterdogpe":
+                                GroupAPI.createGroup(args[1], 0);
+                                break;
+                            case "pocketmine":
+                                GroupAPI.createGroup(args[1], 1);
+                                break;
+                            case "nukkit":
+                                GroupAPI.createGroup(args[1], 2);
+                                break;
+                            default:
+                                BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | nukkit | waterdogpe>");
+                                break;
                         }
-                        else if (args[2].equals("waterdogpe")) {
-                            GroupAPI.createGroup(args[1], 0);
-                        }
-                        else {
-                            BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | waterdogpe>");
-                        }
-                    }
-                    else {
+                    } else {
                         BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | waterdogpe>");
                     }
-                }
-                else {
+                } else {
                     BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | waterdogpe>");
                 }
             }
-        }
-        else {
+        } else {
             BedrockCloud.getLogger().warning("Try to execute: template <start | restart | stop | create | list>");
         }
         super.onCommand(args);

@@ -63,6 +63,9 @@ public class BedrockCloud
     }
 
     public BedrockCloud() {
+
+        Thread.currentThread().setName("BedrockCloud");
+
         running = true;
         Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 

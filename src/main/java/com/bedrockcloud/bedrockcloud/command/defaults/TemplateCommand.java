@@ -26,8 +26,6 @@ public class TemplateCommand extends Command
                 for (final Template template : BedrockCloud.getTemplateProvider().templateMap.values()) {
                     if (template.getType() == 1) {
                         this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: POCKETMINE");
-                    } else if (template.getType() == 2) {
-                        this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: NUKKIT");
                     }
                 }
             } else {
@@ -96,9 +94,6 @@ public class TemplateCommand extends Command
                                 break;
                             case "pocketmine":
                                 GroupAPI.createGroup(args[1], 1);
-                                break;
-                            case "nukkit":
-                                GroupAPI.createGroup(args[1], 2);
                                 break;
                             default:
                                 BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | nukkit | waterdogpe>");

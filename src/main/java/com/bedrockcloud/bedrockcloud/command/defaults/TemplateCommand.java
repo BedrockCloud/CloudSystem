@@ -96,7 +96,7 @@ public class TemplateCommand extends Command
                                 GroupAPI.createGroup(args[1], 1);
                                 break;
                             default:
-                                BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | nukkit | waterdogpe>");
+                                BedrockCloud.getLogger().warning("Try to execute: template <create> <pocketmine | waterdogpe>");
                                 break;
                         }
                     } else {

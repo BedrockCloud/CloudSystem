@@ -2,6 +2,7 @@ package com.bedrockcloud.bedrockcloud.server.port;
 
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
 import com.bedrockcloud.bedrockcloud.server.gameserver.GameServer;
+import com.bedrockcloud.bedrockcloud.server.gameserver.GameServerProvider;
 import com.bedrockcloud.bedrockcloud.server.privategameserver.PrivateGameServer;
 import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import com.bedrockcloud.bedrockcloud.templates.Template;
@@ -31,6 +32,14 @@ public final class PortValidator {
     }
 
     public static int getNextProxyServerPort(ProxyServer server) {
+        var port = PORTS_BOUNCE_PROXY;
+        while (isPortUsed(port)) {
+            port++;
+        }
+        return port;
+    }
+
+    public static int getNextLobbyServerPort(GameServer server) {
         var port = PORTS_BOUNCE_PROXY;
         while (isPortUsed(port)) {
             port++;

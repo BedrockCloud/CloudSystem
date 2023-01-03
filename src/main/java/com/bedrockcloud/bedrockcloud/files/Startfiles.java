@@ -28,8 +28,7 @@ public class Startfiles implements Loggable
             this.directorys.add(this.directorys.get(2) + "/versions/waterdogpe");
             this.directorys.add(this.directorys.get(2) + "/notify");
             this.directorys.add(this.directorys.get(3) + "/crashdumps");
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         this.checkFolder();
@@ -97,6 +96,7 @@ public class Startfiles implements Loggable
                 config.set("auto-update-on-start", false);
                 config.set("wdpe-login-extras", false);
                 config.set("enable-cloudlog-file", false);
+                config.set("use-proxy", false);
                 config.save(file);
                 this.getLogger().debug("Check the server versions...");
                 if (SoftwareManager.download("https://github.com/pmmp/PocketMine-MP/releases/latest/download/PocketMine-MP.phar", "./local/versions/pocketmine/PocketMine-MP.phar")) {

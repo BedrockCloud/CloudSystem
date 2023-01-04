@@ -77,8 +77,10 @@ public class BedrockCloud
             return;
         }
 
-        getConfig().set("version", Objects.requireNonNull(getVersion()).version());
-        getConfig().save();
+        Config config = getConfig();
+
+        config.set("version", Objects.requireNonNull(getVersion()).version());
+        config.save();
 
         this.initProvider();
         this.registerCommands();

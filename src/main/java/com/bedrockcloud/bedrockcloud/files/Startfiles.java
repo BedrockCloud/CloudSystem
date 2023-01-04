@@ -97,6 +97,7 @@ public class Startfiles implements Loggable
                 config.set("wdpe-login-extras", false);
                 config.set("enable-cloudlog-file", false);
                 config.set("use-proxy", false);
+                config.set("version", "2.0.0");
                 config.save(file);
                 this.getLogger().debug("Check the server versions...");
                 if (SoftwareManager.download("https://github.com/pmmp/PocketMine-MP/releases/latest/download/PocketMine-MP.phar", "./local/versions/pocketmine/PocketMine-MP.phar")) {

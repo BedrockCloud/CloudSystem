@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.SocketOption;
 import java.net.StandardSocketOptions;
 
-public class ClientRequest extends Thread {
+public class ClientRequest extends Thread implements AutoCloseable {
     private final Socket socket;
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
@@ -47,5 +47,12 @@ public class ClientRequest extends Thread {
         }
         BedrockCloud.getLogger().warning("Server connection failed, stopping thread.");
         this.stop();
+        try {
+            close();
+        } catch (Exception ignored) {}
+    }
+
+    @Override
+    public void close() throws Exception {
     }
 }

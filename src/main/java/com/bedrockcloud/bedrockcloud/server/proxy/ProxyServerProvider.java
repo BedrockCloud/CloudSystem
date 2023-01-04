@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProxyServerProvider
-{
+public class ProxyServerProvider {
     public Map<String, ProxyServer> proxyServerMap;
     
     public ProxyServerProvider() {
@@ -55,8 +54,7 @@ public class ProxyServerProvider
                 }
                 this.delete(file);
             }
-        }
-        else {
+        } else {
             file.delete();
         }
     }

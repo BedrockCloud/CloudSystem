@@ -77,6 +77,9 @@ public class BedrockCloud
             return;
         }
 
+        getConfig().set("version", Objects.requireNonNull(getVersion()).version());
+        getConfig().save();
+
         this.initProvider();
         this.registerCommands();
         getLogger().info("This cloud was developed by §b" + Arrays.toString(Objects.requireNonNull(getVersion()).developers()).replace("[", "").replace("]", ""));

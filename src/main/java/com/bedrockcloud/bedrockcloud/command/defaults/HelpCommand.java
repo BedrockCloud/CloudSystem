@@ -13,9 +13,9 @@ public class HelpCommand extends Command implements Loggable
     
     @Override
     protected void onCommand(final String[] args) {
-        StringBuilder message = new StringBuilder("List of all commands:\n");
+        StringBuilder message = new StringBuilder("§aList of all commands:§r\n");
         for (Command cmd : BedrockCloud.commandManager.getCommands()){
-            message.append(cmd.getCommand()).append("\n");
+            message.append("§7- §e").append(cmd.getCommand()).append("§r\n");
         }
         BedrockCloud.getLogger().command(message.toString());
     }

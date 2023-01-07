@@ -28,8 +28,6 @@ public class TemplateCommand extends Command
                         this.getLogger().info("§c➤ §rName: " + template.getName() + " | Maintenance: " + template.isMaintenance  + " | Beta: " + template.isBeta  + " | TYPE: POCKETMINE");
                     }
                 }
-            } else {
-                BedrockCloud.getLogger().warning("Try to execute: template <list>");
             }
         } else {
             BedrockCloud.getLogger().warning("Try to execute: template <list>");

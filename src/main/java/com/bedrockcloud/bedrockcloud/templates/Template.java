@@ -97,6 +97,7 @@ public class Template implements Loggable
 
         if (this.getMaintenance()) {
             if (!byCommand) {
+                BedrockCloud.getLogger().warning("§cThe group §e" + this.getName() + " §cwas not started because it is in maintenance, but you can start it yourself with the command §7'§etemplate start <template>§7'§c.");
                 return;
             }
         }

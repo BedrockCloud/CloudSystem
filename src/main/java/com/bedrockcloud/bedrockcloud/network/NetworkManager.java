@@ -12,13 +12,14 @@ import com.bedrockcloud.bedrockcloud.console.Loggable;
 
 public class NetworkManager implements Loggable
 {
+    private static final int DEFAULT_BACKLOG_SIZE = 50;
     public ServerSocket serverSocket;
     public HashMap<String, Socket> channelList;
-    
+
     public NetworkManager(final int port) {
         try {
             this.getLogger().info("Connection on 127.0.0.1:" + port + " established successfully");
-            this.serverSocket = new ServerSocket(port);
+            this.serverSocket = new ServerSocket(port, DEFAULT_BACKLOG_SIZE);
             this.channelList = new HashMap<String, Socket>();
         } catch (IOException e) {
             BedrockCloud.getLogger().exception(e);
@@ -27,7 +28,7 @@ public class NetworkManager implements Loggable
 
     public void start() {
         while (BedrockCloud.isRunning()) {
-            if (!(this.serverSocket == null) && !this.serverSocket.isClosed()) {
+            if (this.serverSocket != null && !this.serverSocket.isClosed()) {
                 try {
                     Socket clientSocket = this.serverSocket.accept();
                     try {

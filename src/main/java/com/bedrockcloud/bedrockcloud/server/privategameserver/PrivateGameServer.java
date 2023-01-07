@@ -139,39 +139,37 @@ public class PrivateGameServer
         } catch (Exception ignored) {
         }
     }
-    
+
     public Socket getSocket() {
         return this.socket;
     }
-    
+
     public void setSocket(final Socket socket) {
         this.socket = socket;
     }
 
     public void pushPacket(final DataPacket cloudPacket) {
-        try {
-            if (this.serverName == null) {
-                return;
-            }
 
-            if (this.socket.isClosed()) {
-                BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is closed.");
-                return;
-            }
+        if (this.serverName == null || this.socket == null) {
+            return;
+        }
 
-            if (!this.socket.isConnected()) {
-                BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is not connected.");
-                return;
-            }
-            try {
-                final BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.getSocket().getOutputStream()));
-                bufferedWriter.write(cloudPacket.encode());
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            } catch (IOException e) {
-                BedrockCloud.getLogger().exception(e);
-            }
-        } catch (NullPointerException ignored) {}
+        if (this.socket.isClosed()) {
+            BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is closed.");
+            return;
+        }
+
+        if (!this.socket.isConnected()) {
+            BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is not connected.");
+            return;
+        }
+        try (final BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.getSocket().getOutputStream()))) {
+            bufferedWriter.write(cloudPacket.encode());
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            BedrockCloud.getLogger().exception(e);
+        }
     }
     
     public int getPlayerCount() {

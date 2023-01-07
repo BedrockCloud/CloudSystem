@@ -94,15 +94,17 @@ public class Template implements Loggable
     }
     
     public void start(boolean byCommand) {
+
+        if (this.getMaintenance()) {
+            if (!byCommand) {
+                return;
+            }
+        }
+
         BedrockCloud.getLogger().info("Starting group " + this.getName() + "...");
         if (this.getType() == 0) {
             new ProxyServer(this);
         } else {
-            if (this.getMaintenance()) {
-                if (!byCommand) {
-                    return;
-                }
-            }
             for (int i = 0; i < this.getMinRunningServer(); ++i) {
                 new GameServer(this);
             }

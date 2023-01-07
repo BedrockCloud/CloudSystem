@@ -8,6 +8,7 @@ import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import com.bedrockcloud.bedrockcloud.templates.Template;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.json.simple.JSONObject;
 
@@ -27,7 +28,10 @@ public class ProxyServerDisconnectPacket extends DataPacket
 
             BedrockCloud.getProxyServerProvider().removeServer(serverName);
             BedrockCloud.getProxyServerProvider().deleteServer(new File("./temp/" + serverName), serverName);
-            proxyServer.stopServer();
+            try {
+                proxyServer.killWithPID();
+            } catch (IOException ignored) {
+            }
             if (BedrockCloud.getTemplateProvider().isTemplateRunning(template)) {
                 if (template.getRunningTemplateServers().size() < template.getMinRunningServer()) {
                     new ProxyServer(template);

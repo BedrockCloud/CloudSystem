@@ -122,7 +122,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}
@@ -135,7 +134,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}
@@ -148,7 +146,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}
@@ -164,7 +161,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}
@@ -177,7 +173,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}
@@ -190,7 +185,6 @@ public class Template implements Loggable
                 if (server == null) {
                     return;
                 }
-                server.stopServer();
                 try {
                     server.killWithPID();
                 } catch (Exception ignored){}

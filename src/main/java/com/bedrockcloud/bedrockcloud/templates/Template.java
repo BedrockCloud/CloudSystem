@@ -128,6 +128,32 @@ public class Template implements Loggable
                 } catch (Exception ignored){}
             }
         }
+
+        for (final String servername : BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet()) {
+            if (Objects.equals(BedrockCloud.getPrivateGameServerProvider().getGameServer(servername).getTemplate().getName(), this.getName())) {
+                final PrivateGameServer server = BedrockCloud.getPrivateGameServerProvider().getGameServer(servername);
+                if (server == null) {
+                    return;
+                }
+                server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
+            }
+        }
+
+        for (final String servername : BedrockCloud.getProxyServerProvider().proxyServerMap.keySet()) {
+            if (Objects.equals(BedrockCloud.getProxyServerProvider().getProxyServer(servername).getTemplate().getName(), this.getName())) {
+                final ProxyServer server = BedrockCloud.getProxyServerProvider().getProxyServer(servername);
+                if (server == null) {
+                    return;
+                }
+                server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
+            }
+        }
     }
     
     public void stop() {

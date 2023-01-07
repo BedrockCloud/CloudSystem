@@ -324,12 +324,9 @@ public class BedrockCloud
                 proxyServer.killWithPID();
             } catch (IOException ignored) {}
         }
-        final ProcessBuilder builder = new ProcessBuilder();
         try {
-                builder.command("/bin/sh", "-c", "killall -9 php").start();
-                builder.command("/bin/sh", "-c", "killall -9 java").start();
-        } catch (IOException e) {
-            BedrockCloud.getLogger().exception(e);
-        }
+            BedrockCloud.getLogger().info("§cPlease wait until the cloud has been stopped.");
+            Thread.sleep(3000L);
+        } catch (Exception ignored){}
     }
 }

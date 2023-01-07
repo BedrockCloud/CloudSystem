@@ -68,8 +68,7 @@ public class Startfiles implements Loggable
                 }
                 this.delete(file);
             }
-        }
-        else {
+        } else {
             file.delete();
         }
     }
@@ -87,6 +86,7 @@ public class Startfiles implements Loggable
             if (!templatesc.exists()) {
                 templatesc.createNewFile();
             }
+
             final File file = new File("./local/config.json");
             if (!file.exists()) {
                 final Config config = new Config(file, 1);

@@ -32,22 +32,6 @@ public class ProxyServerConnectPacket extends DataPacket implements Loggable
         try {
             final Socket s = new Socket("127.0.0.1", Integer.parseInt(socketPort.toString()));
             proxyServer.setSocket(s);
-            for (final String name : GroupAPI.getGroups()) {
-                try {
-                    final HashMap<String, Object> stats = (HashMap<String, Object>) json.get(name, 9);
-                    if (Integer.parseInt(stats.get("type").toString()) == 1) {
-                        final Template group = BedrockCloud.getTemplateProvider().getTemplate(name);
-                        if (group != null) {
-                            if (!BedrockCloud.getTemplateProvider().isTemplateRunning(group)) {
-                                group.start(true);
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    BedrockCloud.getLogger().exception(e);
-                }
-            }
-
             for (final String key : BedrockCloud.getProxyServerProvider().getProxyServerMap().keySet()) {
                 final ProxyServer proxy = BedrockCloud.getProxyServerProvider().getProxyServer(key);
                 final RegisterServerPacket packet = new RegisterServerPacket();

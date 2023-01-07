@@ -98,6 +98,7 @@ public class BedrockCloud
         ttime.schedule(new PrivateKeepALiveTask(), 1000L, 1000L);
 
         this.startAllProxies();
+        this.startAllServers();
         BedrockCloud.networkManager.start();
     }
 
@@ -180,6 +181,24 @@ public class BedrockCloud
                 }
             } catch (IOException e2) {
                 getLogger().exception(e2);
+            }
+        }
+    }
+
+    public void startAllServers() {
+        for (final String name : GroupAPI.getGroups()) {
+            try {
+                final HashMap<String, Object> stats = (HashMap<String, Object>) json.get(name, 9);
+                if (Integer.parseInt(stats.get("type").toString()) == 1) {
+                    final Template group = BedrockCloud.getTemplateProvider().getTemplate(name);
+                    if (group != null) {
+                        if (!BedrockCloud.getTemplateProvider().isTemplateRunning(group)) {
+                            group.start(false);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                BedrockCloud.getLogger().exception(e);
             }
         }
     }

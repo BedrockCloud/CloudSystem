@@ -24,7 +24,7 @@ public class StartGroupPacket extends DataPacket
             this.getLogger().error("The group is already running");
         }
         else {
-            group.start();
+            group.start(true);
         }
     }
 }

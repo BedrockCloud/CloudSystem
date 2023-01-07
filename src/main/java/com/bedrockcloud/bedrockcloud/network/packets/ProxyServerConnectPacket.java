@@ -39,7 +39,7 @@ public class ProxyServerConnectPacket extends DataPacket implements Loggable
                         final Template group = BedrockCloud.getTemplateProvider().getTemplate(name);
                         if (group != null) {
                             if (!BedrockCloud.getTemplateProvider().isTemplateRunning(group)) {
-                                group.start();
+                                group.start(true);
                             }
                         }
                     }

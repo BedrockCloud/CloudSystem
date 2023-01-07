@@ -174,7 +174,7 @@ public class BedrockCloud
                     final Template group = getTemplateProvider().getTemplate(name);
                     if (group != null) {
                         if (!getTemplateProvider().isTemplateRunning(group)) {
-                            group.start();
+                            group.start(false);
                         }
                     }
                 }

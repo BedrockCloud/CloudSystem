@@ -49,7 +49,7 @@ public class TemplateCommand extends Command
                         BedrockCloud.getLogger().error("The Template is already running!");
                         return;
                     }
-                    template.start();
+                    template.start(true);
                 } else {
                     BedrockCloud.getLogger().warning("Try to execute: template start <TemplateName>");
                 }

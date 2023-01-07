@@ -163,11 +163,9 @@ public class BedrockCloud
     private void startAllProxies() {
         try {
             Thread.sleep(3000L);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             getLogger().exception(e);
         }
-        getLogger().info("Waiting for ProxyConnection...");
         for (final String name : GroupAPI.getGroups()) {
             try {
                 final HashMap<String, Object> stats = (HashMap<String, Object>)json.get(name, 9);

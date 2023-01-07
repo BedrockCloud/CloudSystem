@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
 import com.bedrockcloud.bedrockcloud.player.CloudPlayer;
 import com.bedrockcloud.bedrockcloud.server.gameserver.GameServer;
+import com.bedrockcloud.bedrockcloud.server.privategameserver.PrivateGameServer;
 import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import com.bedrockcloud.bedrockcloud.console.Loggable;
 
@@ -134,6 +135,32 @@ public class Template implements Loggable
         for (final String servername : BedrockCloud.getGameServerProvider().gameServerMap.keySet()) {
             if (Objects.equals(BedrockCloud.getGameServerProvider().getGameServer(servername).getTemplate().getName(), this.getName())) {
                 final GameServer server = BedrockCloud.getGameServerProvider().getGameServer(servername);
+                if (server == null) {
+                    return;
+                }
+                server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
+            }
+        }
+
+        for (final String servername : BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet()) {
+            if (Objects.equals(BedrockCloud.getPrivateGameServerProvider().getGameServer(servername).getTemplate().getName(), this.getName())) {
+                final PrivateGameServer server = BedrockCloud.getPrivateGameServerProvider().getGameServer(servername);
+                if (server == null) {
+                    return;
+                }
+                server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
+            }
+        }
+
+        for (final String servername : BedrockCloud.getProxyServerProvider().proxyServerMap.keySet()) {
+            if (Objects.equals(BedrockCloud.getProxyServerProvider().getProxyServer(servername).getTemplate().getName(), this.getName())) {
+                final ProxyServer server = BedrockCloud.getProxyServerProvider().getProxyServer(servername);
                 if (server == null) {
                     return;
                 }

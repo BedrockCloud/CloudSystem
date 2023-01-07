@@ -122,6 +122,9 @@ public class Template implements Loggable
                     return;
                 }
                 server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
             }
         }
     }
@@ -135,6 +138,9 @@ public class Template implements Loggable
                     return;
                 }
                 server.stopServer();
+                try {
+                    server.killWithPID();
+                } catch (Exception ignored){}
             }
         }
         BedrockCloud.getTemplateProvider().removeRunningGroup(this);

@@ -29,8 +29,6 @@ public class TemplateCommand extends Command
                     }
                 }
             }
-        } else {
-            BedrockCloud.getLogger().warning("Try to execute: template <list>");
         }
 
         if (args.length != 1 && args.length != 0) {

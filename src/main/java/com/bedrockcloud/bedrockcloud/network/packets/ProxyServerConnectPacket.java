@@ -12,6 +12,7 @@ import com.bedrockcloud.bedrockcloud.tasks.KeepALiveTask;
 import com.bedrockcloud.bedrockcloud.templates.Template;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.util.HashMap;
 import java.net.Socket;
 
@@ -29,22 +30,17 @@ public class ProxyServerConnectPacket extends DataPacket implements Loggable
         final ProxyServer proxyServer = BedrockCloud.getProxyServerProvider().getProxyServer(serverName);
         proxyServer.pid = Integer.parseInt(pid);
         final Object socketPort = jsonObject.get("socketPort");
-        try {
-            final Socket s = new Socket("127.0.0.1", Integer.parseInt(socketPort.toString()));
-            proxyServer.setSocket(s);
-            for (final String key : BedrockCloud.getProxyServerProvider().getProxyServerMap().keySet()) {
-                final ProxyServer proxy = BedrockCloud.getProxyServerProvider().getProxyServer(key);
-                final RegisterServerPacket packet = new RegisterServerPacket();
-                for (GameServer server : BedrockCloud.getGameServerProvider().gameServerMap.values()) {
-                    if (server != null) {
-                        packet.addValue("serverPort", server.getServerPort());
-                        packet.addValue("serverName", server.getServerName());
-                        proxy.pushPacket(packet);
-                    }
+        proxyServer.setSocket(clientRequest.getSocket());
+        for (final String key : BedrockCloud.getProxyServerProvider().getProxyServerMap().keySet()) {
+            final ProxyServer proxy = BedrockCloud.getProxyServerProvider().getProxyServer(key);
+            final RegisterServerPacket packet = new RegisterServerPacket();
+            for (GameServer server : BedrockCloud.getGameServerProvider().gameServerMap.values()) {
+                if (server != null) {
+                    packet.addValue("serverPort", server.getServerPort());
+                    packet.addValue("serverName", server.getServerName());
+                    proxy.pushPacket(packet);
                 }
             }
-        } catch (IOException e2) {
-            BedrockCloud.getLogger().exception(e2);
         }
     }
 }

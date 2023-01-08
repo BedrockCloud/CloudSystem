@@ -11,25 +11,25 @@ import java.io.*;
 
 import com.bedrockcloud.bedrockcloud.network.packets.ProxyServerDisconnectPacket;
 
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class ProxyServer
 {
     private final Template template;
     private final String serverName;
     private int serverPort;
-    private Socket socket;
+    private DatagramSocket socket;
     public final String temp_path = "./templates/";
     public final String servers_path = "./temp/";
     public int pid;
-    
+    public int socketPort;
+
     public ProxyServer(final Template template) {
         this.template = template;
         this.serverName = template.getName() + "-" + BedrockCloud.getGameServerProvider().getFreeNumber("./temp/" + template.getName());
         this.serverPort = PortValidator.getNextProxyServerPort(this);
         this.pid = -1;
+        this.socketPort = -1;
         BedrockCloud.getProxyServerProvider().addProxyServer(this);
         this.copyServer();
         try {
@@ -39,47 +39,35 @@ public class ProxyServer
             BedrockCloud.getLogger().exception(e);
         }
     }
-    
+
     public Template getTemplate() {
         return this.template;
     }
-    
+
     public String getServerName() {
         return this.serverName;
     }
 
-    public Socket getSocket() {
+    public void setSocketPort(int socketPort) {
+        this.socketPort = socketPort;
+    }
+
+    public int getSocketPort() {
+        return socketPort;
+    }
+
+    public DatagramSocket getSocket() {
         return this.socket;
     }
 
-    public void setSocket(final Socket socket) {
+    public void setSocket(final DatagramSocket socket) {
         this.socket = socket;
     }
-    
+
     public int getServerPort() {
         return this.serverPort;
     }
-    
-    private static boolean isAvailablePort(final int port) {
-        Socket s = null;
-        try {
-            s = new Socket("localhost", port);
-            return false;
-        }
-        catch (IOException e2) {
-            return true;
-        }
-        finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    BedrockCloud.getLogger().exception(e);
-                }
-            }
-        }
-    }
-    
+
     public void startServer() throws InterruptedException {
         final File server = new File("./temp/" + this.serverName);
         if (server.exists()) {
@@ -106,7 +94,7 @@ public class ProxyServer
             BedrockCloud.getLogger().warning(notifyMessage);
         }
     }
-    
+
     public void stopServer() {
         String notifyMessage = MessageAPI.stopMessage.replace("%service", this.serverName);
         BedrockCloud.sendNotifyCloud(notifyMessage);
@@ -130,7 +118,6 @@ public class ProxyServer
     }
 
     public void pushPacket(final DataPacket cloudPacket) {
-
         if (this.serverName == null || this.socket == null) {
             return;
         }
@@ -139,20 +126,34 @@ public class ProxyServer
             BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is closed.");
             return;
         }
-
-        if (!this.socket.isConnected()) {
-            BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is not connected.");
-            return;
-        }
-        try (final BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.getSocket().getOutputStream()))) {
-            bufferedWriter.write(cloudPacket.encode());
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            byteArrayOutputStream.write(cloudPacket.encode().getBytes());
         } catch (IOException e) {
-            BedrockCloud.getLogger().exception(e);
+            throw new RuntimeException(e);
+        }
+
+        byte[] data = byteArrayOutputStream.toByteArray();
+        InetAddress address = null;
+        try {
+            address = InetAddress.getByName("0.0.0.0");
+        } catch (UnknownHostException ignored) {
+        }
+        int port = getServerPort()+1;
+        DatagramPacket datagramPacket = new DatagramPacket(data, data.length, address, port);
+        DatagramSocket datagramSocket = null;
+        try {
+            datagramSocket = new DatagramSocket();
+        } catch (SocketException ex) {
+            BedrockCloud.getLogger().exception(ex);
+        }
+        try {
+            datagramSocket.send(datagramPacket);
+        } catch (IOException ex) {
+            BedrockCloud.getLogger().exception(ex);
         }
     }
-    
+
     public void copyServer() {
         final File src = new File("./templates/" + this.template.getName() + "/");
         final File dest = new File("./temp/" + this.serverName);

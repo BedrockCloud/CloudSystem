@@ -73,11 +73,11 @@ public class PacketHandler implements Loggable
                 }
             }
         } else {
-            this.getLogger().warning("§cAuthorization failed. Client infomation:" + clientRequest.getSocket().getLocalAddress() + ":" + clientRequest.getSocket().getPort());
+            this.getLogger().warning("§cAuthorization failed. Client infomation:" + clientRequest.getDatagramPacket().getAddress().toString() + ":" + clientRequest.getDatagramPacket().getPort());
         }
     }
 
     public boolean isLocalHost(ClientRequest request){
-        return request.getSocket().getInetAddress().isLoopbackAddress();
+        return request.getDatagramPacket().getAddress().isLoopbackAddress();
     }
 }

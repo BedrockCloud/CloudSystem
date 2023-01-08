@@ -9,6 +9,9 @@ import com.bedrockcloud.bedrockcloud.server.privategameserver.PrivateGameServer;
 import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import org.json.simple.JSONObject;
 
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
 public class GameServerConnectPacket extends DataPacket
 {
     @Override

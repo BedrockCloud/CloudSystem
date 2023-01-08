@@ -2,66 +2,67 @@ package com.bedrockcloud.bedrockcloud.network.client;
 
 import java.io.*;
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
-import com.google.gson.JsonObject;
-import jdk.net.ExtendedSocketOptions;
-import org.json.simple.JSONObject;
-
-import java.net.Socket;
-import java.net.SocketOption;
-import java.net.StandardSocketOptions;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
 public class ClientRequest extends Thread implements AutoCloseable {
-    private static final int BUFFER_SIZE = 1024;
-    private final Socket socket;
+    private final DatagramPacket datagramPacket;
+    private final DatagramSocket socket;
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
 
-    public ClientRequest(final Socket socket) {
+    public ClientRequest(final DatagramPacket datagramPacket, final DatagramSocket socket) {
+        this.datagramPacket = datagramPacket;
         this.socket = socket;
-        try {
-            this.dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream(), BUFFER_SIZE));
-            this.dataOutputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream(), BUFFER_SIZE));
-        } catch (IOException e) {
-            BedrockCloud.getLogger().exception(e);
-        }
+        this.dataInputStream = new DataInputStream(new ByteArrayInputStream(datagramPacket.getData(), datagramPacket.getOffset(), datagramPacket.getLength()));
+        this.dataOutputStream = new DataOutputStream(new ByteArrayOutputStream());
     }
 
-    public Socket getSocket() {
+    public DatagramPacket getDatagramPacket() {
+        return this.datagramPacket;
+    }
+
+    public DatagramSocket getSocket() {
         return this.socket;
     }
 
     @Override
     public void run() {
-        while (!this.socket.isClosed()) {
-            String line = null;
-            try {
-                line = this.dataInputStream.readLine();
-                if (line == null) {
-                    close();
-                    return;
-                }
-                try {
-                    JSONObject packet = BedrockCloud.getPacketHandler().handleJsonObject(BedrockCloud.getPacketHandler().getPacketNameByRequest(line), line);
-                    if (packet != null) {
-                        BedrockCloud.getPacketHandler().handleCloudPacket(packet, this);
-                    }
-                } catch (NullPointerException ex) {
-                    BedrockCloud.getLogger().exception(ex);
-                }
-            } catch (Exception ex1) {
-                BedrockCloud.getLogger().exception(ex1);
-            }
-        }
-        BedrockCloud.getLogger().warning("Server connection failed, stopping thread.");
+        String line = null;
         try {
-            close();
-        } catch (Exception ignored) {}
+            line = this.dataInputStream.readLine();
+            if (line == null) {
+                return;
+            }
+            try {
+                BedrockCloud.getPacketHandler().handleCloudPacket(BedrockCloud.getPacketHandler().handleJsonObject(BedrockCloud.getPacketHandler().getPacketNameByRequest(line), line), this);
+            } catch (NullPointerException ex) {
+                BedrockCloud.getLogger().exception(ex);
+            }
+        } catch (NullPointerException | IOException ex1) {
+            BedrockCloud.getLogger().exception(ex1);
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            this.dataOutputStream.write(byteArrayOutputStream.toByteArray());
+        } catch (IOException ignored) {}
+        byte[] data = byteArrayOutputStream.toByteArray();
+        DatagramPacket responsePacket = new DatagramPacket(data, data.length, this.datagramPacket.getAddress(), this.datagramPacket.getPort());
+        try {
+            DatagramSocket datagramSocket = new DatagramSocket();
+            datagramSocket.send(responsePacket);
+        } catch (IOException e) {
+            BedrockCloud.getLogger().exception(e);
+        }
     }
 
     @Override
     public void close() throws Exception {
-        if (this.socket != null) {
-            this.socket.close();
-        }
+        this.dataOutputStream.close();
+        this.dataInputStream.close();
     }
 }

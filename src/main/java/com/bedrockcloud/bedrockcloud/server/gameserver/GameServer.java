@@ -9,8 +9,7 @@ import com.bedrockcloud.bedrockcloud.api.MessageAPI;
 import com.bedrockcloud.bedrockcloud.network.DataPacket;
 import com.bedrockcloud.bedrockcloud.network.packets.GameServerDisconnectPacket;
 
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 import com.bedrockcloud.bedrockcloud.templates.Template;
@@ -24,7 +23,7 @@ public class GameServer
     public int state;
     private int playerCount;
     private int aliveChecks;
-    private Socket socket;
+    private DatagramSocket socket;
     public final String temp_path = "./templates/";
     public final String servers_path = "./temp/";
     
@@ -137,16 +136,15 @@ public class GameServer
         }
     }
 
-    public Socket getSocket() {
+    public DatagramSocket getSocket() {
         return this.socket;
     }
 
-    public void setSocket(final Socket socket) {
+    public void setSocket(final DatagramSocket socket) {
         this.socket = socket;
     }
 
     public void pushPacket(final DataPacket cloudPacket) {
-
         if (this.serverName == null || this.socket == null) {
             return;
         }
@@ -155,17 +153,31 @@ public class GameServer
             BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is closed.");
             return;
         }
-
-        if (!this.socket.isConnected()) {
-            BedrockCloud.getLogger().error("CloudPacket cannot be push because socket is not connected.");
-            return;
-        }
-        try (final BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.getSocket().getOutputStream()))) {
-            bufferedWriter.write(cloudPacket.encode());
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            byteArrayOutputStream.write(cloudPacket.encode().getBytes());
         } catch (IOException e) {
-            BedrockCloud.getLogger().exception(e);
+            throw new RuntimeException(e);
+        }
+
+        byte[] data = byteArrayOutputStream.toByteArray();
+        InetAddress address = null;
+        try {
+            address = InetAddress.getByName("127.0.0.1");
+        } catch (UnknownHostException ignored) {
+        }
+        int port = getServerPort()+1;
+        DatagramPacket datagramPacket = new DatagramPacket(data, data.length, address, port);
+        DatagramSocket datagramSocket = null;
+        try {
+            datagramSocket = new DatagramSocket();
+        } catch (SocketException ex) {
+            BedrockCloud.getLogger().exception(ex);
+        }
+        try {
+            datagramSocket.send(datagramPacket);
+        } catch (IOException ex) {
+            BedrockCloud.getLogger().exception(ex);
         }
     }
     

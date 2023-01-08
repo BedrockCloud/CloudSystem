@@ -1,26 +1,25 @@
 package com.bedrockcloud.bedrockcloud.network;
 
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
+import com.bedrockcloud.bedrockcloud.console.Loggable;
 import com.bedrockcloud.bedrockcloud.network.client.ClientRequest;
 
 import java.io.IOException;
 import java.net.*;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.HashMap;
-import java.util.Map;
 
-import com.bedrockcloud.bedrockcloud.console.Loggable;
-
-public class NetworkManager implements Loggable
-{
-    private static final int DEFAULT_BACKLOG_SIZE = 50;
-    public ServerSocket serverSocket;
-    public HashMap<String, Socket> channelList;
+public class NetworkManager implements Loggable {
+    public DatagramSocket datagramSocket;
+    public HashMap<String, DatagramPacket> channelList;
 
     public NetworkManager(final int port) {
         try {
-            this.getLogger().info("Connection on 127.0.0.1:" + port + " established successfully");
-            this.serverSocket = new ServerSocket(port, DEFAULT_BACKLOG_SIZE);
-            this.channelList = new HashMap<String, Socket>();
+            this.getLogger().info("Listening on 127.0.0.1:" + port);
+            this.datagramSocket = new DatagramSocket(port);
+            this.channelList = new HashMap<String, DatagramPacket>();
         } catch (IOException e) {
             BedrockCloud.getLogger().exception(e);
         }
@@ -28,24 +27,21 @@ public class NetworkManager implements Loggable
 
     public void start() {
         while (BedrockCloud.isRunning()) {
-            if (this.serverSocket != null && !this.serverSocket.isClosed()) {
+            if (this.datagramSocket != null && !this.datagramSocket.isClosed()) {
                 try {
-                    Socket clientSocket = this.serverSocket.accept();
-                    try {
-                        clientSocket.setTcpNoDelay(true);
-                        clientSocket.setKeepAlive(true);
-                    } catch (SocketException e) {
-                        BedrockCloud.getLogger().exception(e);
-                    }
-                    if (clientSocket.isConnected() && !clientSocket.isClosed()) {
-                        ClientRequest request = new ClientRequest(clientSocket);
+                    byte[] buffer = new byte[1024];
+                    DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+                    this.datagramSocket.receive(datagramPacket);
+
+                    if (datagramPacket.getLength() > 0) {
+                        ClientRequest request = new ClientRequest(datagramPacket, this.datagramSocket);
                         request.start();
                     }
                 } catch (IOException e) {
                     BedrockCloud.getLogger().exception(e);
                 }
             } else {
-                BedrockCloud.getLogger().warning("§cServerSocket is null or closed.");
+                BedrockCloud.getLogger().warning("DatagramSocket is null or closed.");
             }
         }
     }

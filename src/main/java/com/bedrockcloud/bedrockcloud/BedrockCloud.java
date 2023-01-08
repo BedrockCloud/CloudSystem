@@ -309,12 +309,10 @@ public class BedrockCloud
     }
 
     public static void shutdown(){
-        try {
-            if (BedrockCloud.networkManager.serverSocket != null && !BedrockCloud.networkManager.serverSocket.isClosed()){
-                BedrockCloud.networkManager.serverSocket.close();
-                BedrockCloud.getLogger().warning("§cServerSocket was closed.");
-            }
-        } catch (IOException ignored) {}
+        if (BedrockCloud.networkManager.datagramSocket != null && !BedrockCloud.networkManager.datagramSocket.isClosed()) {
+            BedrockCloud.networkManager.datagramSocket.close();
+            BedrockCloud.getLogger().warning("DatagramSocket was closed.");
+        }
 
         for (final String templateName : BedrockCloud.getTemplateProvider().templateMap.keySet()) {
             BedrockCloud.getTemplateProvider().removeRunningGroup(templateName);

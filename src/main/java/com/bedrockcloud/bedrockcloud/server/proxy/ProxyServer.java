@@ -106,6 +106,10 @@ public class ProxyServer
     }
 
     public void killWithPID() throws IOException {
+        String notifyMessage = MessageAPI.stoppedMessage.replace("%service", this.serverName);
+        BedrockCloud.sendNotifyCloud(notifyMessage);
+        BedrockCloud.getLogger().warning(notifyMessage);
+
         final ProcessBuilder builder = new ProcessBuilder();
         try {
             builder.command("/bin/sh", "-c", "screen -X -S " + this.serverName + " kill").start();
@@ -115,6 +119,15 @@ public class ProxyServer
             builder.command("/bin/sh", "-c", "kill " + this.pid).start();
         } catch (Exception ignored) {
         }
+
+        try {
+            BedrockCloud.getGameServerProvider().deleteServer(new File("./temp/" + this.serverName), this.serverName);
+        } catch (NullPointerException ex) {
+            BedrockCloud.getLogger().exception(ex);
+        }
+
+        this.getTemplate().removeServer(this.getServerName());
+        BedrockCloud.getProxyServerProvider().removeServer(getServerName());
     }
 
     public void pushPacket(final DataPacket cloudPacket) {

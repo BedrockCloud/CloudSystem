@@ -1,6 +1,7 @@
 package com.bedrockcloud.bedrockcloud.network.packets;
 
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
+import com.bedrockcloud.bedrockcloud.api.MessageAPI;
 import com.bedrockcloud.bedrockcloud.network.DataPacket;
 import com.bedrockcloud.bedrockcloud.network.client.ClientRequest;
 import com.bedrockcloud.bedrockcloud.server.port.PortValidator;
@@ -25,9 +26,6 @@ public class ProxyServerDisconnectPacket extends DataPacket
         final ProxyServer proxyServer = BedrockCloud.getProxyServerProvider().getProxyServer(serverName);
         if (proxyServer != null) {
             final Template template = proxyServer.getTemplate();
-
-            BedrockCloud.getProxyServerProvider().removeServer(serverName);
-            BedrockCloud.getProxyServerProvider().deleteServer(new File("./temp/" + serverName), serverName);
             try {
                 proxyServer.killWithPID();
             } catch (IOException ignored) {

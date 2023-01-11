@@ -94,8 +94,16 @@ public class BedrockCloud
             ttime.schedule(new RestartAllTask(), 1000L, 1000L);
         }
 
-        ttime.schedule(new KeepALiveTask(), 1000L, 1000L);
-        ttime.schedule(new PrivateKeepALiveTask(), 1000L, 1000L);
+        KeepALiveTask keepALiveTask = new KeepALiveTask();
+        keepALiveTask.setName("GameServer-KeepALive");
+        keepALiveTask.start();
+
+        PrivateKeepALiveTask privateKeepALiveTask = new PrivateKeepALiveTask();
+        privateKeepALiveTask.setName("PrivateGameServer-KeepALive");
+        privateKeepALiveTask.start();
+
+        //ttime.schedule(new KeepALiveTask(), 1000L, 1000L);
+        //ttime.schedule(new PrivateKeepALiveTask(), 1000L, 1000L);
 
         this.startAllProxies();
         this.startAllServers();

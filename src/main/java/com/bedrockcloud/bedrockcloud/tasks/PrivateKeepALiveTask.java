@@ -21,12 +21,12 @@ import com.bedrockcloud.bedrockcloud.BedrockCloud;
 /*
  * KeepALiveTask to check the status of a service
  */
-public class PrivateKeepALiveTask extends TimerTask {
+public class PrivateKeepALiveTask extends Thread {
     @Override
     public void run() {
         final Iterator<String> var1 = BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet().iterator();
         try {
-            while (true) {
+            while (BedrockCloud.isRunning()) {
                 if (!var1.hasNext()) return;
 
                 final String servername = var1.next();
@@ -57,7 +57,6 @@ public class PrivateKeepALiveTask extends TimerTask {
                         if (BedrockCloud.getGameServerProvider().existServer(servername)) {
                             if (gameServer.getAliveChecks() >= 10) {
                                 gameServer.setAliveChecks(0);
-
                                 String notifyMessage = MessageAPI.timedOut.replace("%service", servername);
                                 BedrockCloud.getLogger().warning(notifyMessage);
                                 BedrockCloud.sendNotifyCloud(notifyMessage);
@@ -98,8 +97,6 @@ public class PrivateKeepALiveTask extends TimerTask {
                                     }
                                 }
                             }
-                        } else {
-                            BedrockCloud.getLogger().warning(var1.next() + " GameServer not exists!");
                         }
                     }
                     if (gameServer.getAliveChecks() < 10) {

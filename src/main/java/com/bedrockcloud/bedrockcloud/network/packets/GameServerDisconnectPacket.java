@@ -9,6 +9,7 @@ import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import com.bedrockcloud.bedrockcloud.templates.Template;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 import com.bedrockcloud.bedrockcloud.network.client.ClientRequest;
@@ -37,30 +38,18 @@ public class GameServerDisconnectPacket extends DataPacket
                 packet.addValue("serverName", serverName);
                 proxy.pushPacket(packet);
             }
-
-            String notifyMessage = MessageAPI.stoppedMessage.replace("%service", serverName);
-            BedrockCloud.sendNotifyCloud(notifyMessage);
-            BedrockCloud.getLogger().warning(notifyMessage);
-
-            final ProcessBuilder builder = new ProcessBuilder(new String[0]);
             try {
-                builder.command("/bin/sh", "-c", "screen -X -S " + serverName + " kill").directory(new File("/root")).start();
-            } catch (Exception ignored) {
+                gameServer.killWithPID();
+            } catch (IOException e) {
+                BedrockCloud.getLogger().exception(e);
             }
-            try {
-                builder.command("/bin/sh", "-c", "kill " + gameServer.pid).directory(new File("/root")).start();
-            } catch (Exception ignored) {
-            }
-
-            gameServer.getTemplate().removeServer(gameServer.getServerName());
-            BedrockCloud.getGameServerProvider().deleteServer(new File("./temp/" + serverName), serverName);
 
             if (BedrockCloud.getTemplateProvider().isTemplateRunning(template)) {
                 final Template tmp = template;
                 int b = 0;
                 for (final String servername : BedrockCloud.getGameServerProvider().gameServerMap.keySet()) {
                     if (Objects.equals(BedrockCloud.getGameServerProvider().getGameServer(servername).getTemplate().getName(), template.getName())) {
-                        ++b;
+                        b++;
                     }
                 }
                 int minRunning = 0;
@@ -68,11 +57,6 @@ public class GameServerDisconnectPacket extends DataPacket
                 for (int i = b; i < minRunning; ++i) {
                     new GameServer(template);
                 }
-            }
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         } else {
             final PrivateGameServer gameServer = BedrockCloud.getPrivateGameServerProvider().getGameServer(serverName);
@@ -85,29 +69,21 @@ public class GameServerDisconnectPacket extends DataPacket
                 proxy.pushPacket(packet);
             }
 
-            String notifyMessage = MessageAPI.stoppedMessage.replace("%service", serverName);
+            String notifyMessage = MessageAPI.stoppedMessage.replace("%service", gameServer.getServerName());
             BedrockCloud.sendNotifyCloud(notifyMessage);
             BedrockCloud.getLogger().warning(notifyMessage);
-
-            final ProcessBuilder builder = new ProcessBuilder(new String[0]);
             try {
-                builder.command("/bin/sh", "-c", "screen -X -S " + serverName + " kill").directory(new File("/root")).start();
-            } catch (Exception ignored) {
+                gameServer.killWithPID();
+            } catch (IOException e) {
+                BedrockCloud.getLogger().exception(e);
             }
-            try {
-                builder.command("/bin/sh", "-c", "kill " + gameServer.pid).directory(new File("/root")).start();
-            } catch (Exception ignored) {
-            }
-
-            gameServer.getTemplate().removeServer(gameServer.getServerName());
-            BedrockCloud.getPrivateGameServerProvider().deleteServer(new File("./temp/" + serverName), serverName);
 
             if (BedrockCloud.getTemplateProvider().isTemplateRunning(template)) {
                 final Template tmp = template;
                 int b = 0;
                 for (final String servername : BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet()) {
                     if (Objects.equals(BedrockCloud.getPrivateGameServerProvider().getGameServer(servername).getTemplate().getName(), template.getName())) {
-                        ++b;
+                        b++;
                     }
                 }
                 int minRunning = 0;
@@ -115,11 +91,6 @@ public class GameServerDisconnectPacket extends DataPacket
                 for (int i = b; i < minRunning; ++i) {
                     new GameServer(template);
                 }
-            }
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }

@@ -5,6 +5,8 @@ import com.bedrockcloud.bedrockcloud.server.privategameserver.PrivateGameServer;
 import com.bedrockcloud.bedrockcloud.server.proxy.ProxyServer;
 import com.bedrockcloud.bedrockcloud.templates.Template;
 import java.io.File;
+import java.io.IOException;
+
 import com.bedrockcloud.bedrockcloud.server.gameserver.GameServer;
 import com.bedrockcloud.bedrockcloud.BedrockCloud;
 import com.bedrockcloud.bedrockcloud.command.Command;
@@ -66,7 +68,10 @@ public class ServerCommand extends Command
                             BedrockCloud.getLogger().error("The Server doesn't exist!");
                             return;
                         }
-                        server.stopServer();
+                        try {
+                            server.killWithPID();
+                        } catch (IOException ignored) {
+                        }
                     } else {
                         BedrockCloud.getLogger().warning("Try to execute: server stop <server>");
                     }

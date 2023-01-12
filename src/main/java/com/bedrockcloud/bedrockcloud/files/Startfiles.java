@@ -89,10 +89,6 @@ public class Startfiles implements Loggable
 
             final File file = new File("./local/config.json");
             if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            if (!file.exists()) {
                 final Config config = new Config(file, 1);
                 config.set("port", 32323.0);
                 config.set("debug-mode", false);

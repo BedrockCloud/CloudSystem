@@ -24,6 +24,9 @@ public class RestartAllTask extends TimerTask
 
     @Override
     public void run() {
+
+        if (!BedrockCloud.isRunning()) return;
+
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Date date = new Date();

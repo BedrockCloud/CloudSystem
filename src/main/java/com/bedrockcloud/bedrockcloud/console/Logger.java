@@ -52,6 +52,9 @@ public class Logger
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         System.out.println(Colors.toColor("§7[§b" + dateTime.format(dateTimeFormatter) + "§7] " + "§7[§r" + prefix + "§7]§r §8» §r" + message + "§r"));
         try {
+
+            File file = new File("./local/config.json");
+            if (!file.exists()) return;
             if (!BedrockCloud.getConfig().getBoolean("enable-cloudlog-file")) return;
             FileWriter cloudLogWriter;
             (cloudLogWriter = new FileWriter(this.cloudLog, true)).append(Colors.removeColor("§7[§b" + dateTime.format(dateTimeFormatter) + "§7] " + "§7[§r" + prefix + "§7]§r §8» §r" + message + "§r")).append("\n");

@@ -29,7 +29,6 @@ com\bedrockcloud\bedrockcloud\network\packets\GameServerInfoRequestPacket.class
 com\bedrockcloud\bedrockcloud\api\MessageAPI.class
 com\bedrockcloud\bedrockcloud\command\defaults\InfoCommand.class
 com\bedrockcloud\bedrockcloud\network\packets\StartPrivateServerPacket.class
-com\bedrockcloud\bedrockcloud\tasks\CheckServerAmountTask.class
 com\bedrockcloud\bedrockcloud\serverQuery\api\Status$Version.class
 com\bedrockcloud\bedrockcloud\command\CommandManager.class
 com\bedrockcloud\bedrockcloud\network\packets\RegisterServerPacket.class

@@ -21,12 +21,12 @@ import com.bedrockcloud.bedrockcloud.BedrockCloud;
 /*
  * KeepALiveTask to check the status of a service
  */
-public class PrivateKeepALiveTask extends Thread {
+public class PrivateKeepALiveTask implements Runnable {
     @Override
     public void run() {
-        final Iterator<String> var1 = BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet().iterator();
         try {
             while (BedrockCloud.isRunning()) {
+                final Iterator<String> var1 = BedrockCloud.getPrivateGameServerProvider().gameServerMap.keySet().iterator();
                 if (!var1.hasNext()) return;
 
                 final String servername = var1.next();

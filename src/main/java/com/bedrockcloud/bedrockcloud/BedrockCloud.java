@@ -33,6 +33,9 @@ import java.lang.management.MemoryUsage;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @VersionInfo(name = "BedrockCloud", version = "2.0.0", developers = { "BedrockCloud" }, identifier = "@Stable")
 public class BedrockCloud
@@ -94,13 +97,12 @@ public class BedrockCloud
             ttime.schedule(new RestartAllTask(), 1000L, 1000L);
         }
 
-        KeepALiveTask keepALiveTask = new KeepALiveTask();
-        keepALiveTask.setName("GameServer-KeepALive");
-        keepALiveTask.start();
+        Runnable keepALiveTask = new KeepALiveTask();
+        Runnable privateKeepALiveTask = new PrivateKeepALiveTask();
 
-        PrivateKeepALiveTask privateKeepALiveTask = new PrivateKeepALiveTask();
-        privateKeepALiveTask.setName("PrivateGameServer-KeepALive");
-        privateKeepALiveTask.start();
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(keepALiveTask, 0, 1, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(privateKeepALiveTask, 0, 1, TimeUnit.SECONDS);
 
         //ttime.schedule(new KeepALiveTask(), 1000L, 1000L);
         //ttime.schedule(new PrivateKeepALiveTask(), 1000L, 1000L);

@@ -6,6 +6,8 @@ import com.bedrockcloud.bedrockcloud.network.client.ClientRequest;
 import com.bedrockcloud.bedrockcloud.server.privategameserver.PrivateGameServer;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
+
 public class StopPrivateServerPacket extends DataPacket
 {
     @Override
@@ -20,7 +22,10 @@ public class StopPrivateServerPacket extends DataPacket
         if (server == null) {
             BedrockCloud.getLogger().error("This Server doesn't exist");
         } else {
-            server.stopServer();
+            try {
+                server.killWithPID();
+            } catch (IOException e) {
+            }
         }
     }
 }

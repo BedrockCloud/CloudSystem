@@ -3,6 +3,8 @@ package com.bedrockcloud.bedrockcloud.command;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+
+import com.bedrockcloud.bedrockcloud.BedrockCloud;
 import com.bedrockcloud.bedrockcloud.console.Loggable;
 
 public class CommandManager extends Thread implements Loggable
@@ -18,7 +20,7 @@ public class CommandManager extends Thread implements Loggable
     @Override
     public void run() {
         String answer = null;
-        while (true) {
+        while (BedrockCloud.isRunning()) {
             answer = new Scanner(System.in).nextLine();
             final String cmd = answer.split(" ")[0];
             final String[] args = this.dropFirstString(answer.split(" "));

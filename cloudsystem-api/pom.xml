@@ -9,7 +9,8 @@
     </parent>
 
     <properties>
-        <maven.compiler.release>22</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>

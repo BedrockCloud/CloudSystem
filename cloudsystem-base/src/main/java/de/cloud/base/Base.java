@@ -213,8 +213,8 @@ public final class Base extends CloudAPI {
     }
 
     public static String getLatestVersion(List<String> versions) {
-        versions.sort(Base::compareVersions);
-        return versions.getLast();
+        versions.sort((v1, v2) -> compareVersions(v2, v1));
+        return versions.get(0);
     }
 
     public static int compareVersions(String v1, String v2) {

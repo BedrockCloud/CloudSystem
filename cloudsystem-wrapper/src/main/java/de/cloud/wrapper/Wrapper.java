@@ -47,9 +47,9 @@ public final class Wrapper extends CloudAPI {
             wrapper.getPacketHandler().registerPacketListener(CacheInitPacket.class, (ctx, packet) -> cacheInitialized.set(true));
 
             var arguments = new ArrayList<>(List.of(args));
-            var mainClassName = arguments.removeFirst();
-            var applicationFile = Path.of(arguments.removeFirst());
-            var useExternalClassLoader = Boolean.parseBoolean(arguments.removeFirst());
+            var mainClassName = arguments.remove(0);
+            var applicationFile = Path.of(arguments.remove(0));
+            var useExternalClassLoader = Boolean.parseBoolean(arguments.remove(0));
 
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             if (useExternalClassLoader) {

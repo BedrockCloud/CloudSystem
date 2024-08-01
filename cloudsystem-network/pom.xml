@@ -12,6 +12,7 @@
     <artifactId>cloudsystem-network</artifactId>
 
     <properties>
+        <maven.compiler.release>22</maven.compiler.release>
         <netty.version>4.1.75.Final</netty.version>
     </properties>
 

@@ -12,6 +12,7 @@
     <artifactId>cloudsystem-base</artifactId>
 
     <properties>
+        <maven.compiler.release>22</maven.compiler.release>
         <maven.build.timestamp.format>dd.MM.yyyy</maven.build.timestamp.format>
     </properties>
 

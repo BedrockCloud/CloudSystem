@@ -18,7 +18,7 @@ public class SimpleCommandManager implements CommandManager {
         List<String> args = new ArrayList<>(List.of(command.split(" ")));
 
         if (CloudAPI.getInstance().getCloudAPITypes() == CloudAPIType.NODE) {
-            var commandName = args.removeFirst();
+            var commandName = args.remove(0);
             var cloudCommand = cachedCloudCommands.get(commandName);
             if (cloudCommand != null) {
                 cloudCommand.execute(Base.getInstance(), args.toArray(String[]::new));

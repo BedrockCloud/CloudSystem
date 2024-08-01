@@ -1,0 +1,5 @@
+name: Cloud
+api: 1.0.0
+version: "${project.version}"
+author: BedrockCloud
+main: de.cloud.plugin.bootstrap.nukkit.NukkitBootstrap

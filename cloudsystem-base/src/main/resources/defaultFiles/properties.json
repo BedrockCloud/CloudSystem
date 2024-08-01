@@ -1,0 +1,17 @@
+{
+  "address": "0.0.0.0",
+  "port": 19132.0,
+  "max-players": 20.0,
+  "view-distance": 32.0,
+  "simulation-distance": 4.0,
+  "motd": "Default Cloud Service",
+  "sub-motd": "https://github.com/BedrockCloud",
+  "default-world": "world",
+  "default-gamemode": "CREATIVE",
+  "generator": "flat",
+  "online-mode": true,
+  "force-resource-packs": false,
+  "white-list": false,
+  "compression": "zlib",
+  "encryption": true
+}

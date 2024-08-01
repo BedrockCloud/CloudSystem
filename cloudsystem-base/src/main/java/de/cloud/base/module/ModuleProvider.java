@@ -1,0 +1,139 @@
+package de.cloud.base.module;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import de.cloud.api.logger.LogType;
+import de.cloud.base.Base;
+import de.cloud.modules.api.ILoadedModule;
+import de.cloud.modules.api.IModule;
+import de.cloud.modules.api.IModuleProvider;
+import lombok.SneakyThrows;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+
+/**
+ * @author TeriumCloud
+ */
+public class ModuleProvider implements IModuleProvider {
+
+    private final HashMap<String, ILoadedModule> loadedModuleCache;
+
+    public ModuleProvider() {
+        this.loadedModuleCache = new HashMap<>();
+    }
+
+    public void loadModules() {
+        File file = new File("modules//");
+        if (!file.exists()) file.mkdirs();
+        Arrays.stream(Objects.requireNonNull(file.listFiles())).toList().stream().filter(file1 -> file1.getName().endsWith(".jar")).forEach(module -> loadModule(module.getPath()));
+    }
+
+    @SneakyThrows
+    public void executeModule(File file, String mainClass, String methode) {
+        try {
+            Class<?> cl = new URLClassLoader(new URL[]{file.toURL()}, Thread.currentThread().getContextClassLoader()).loadClass(mainClass);
+            Class<?> moduleClass = Class.forName(mainClass, true, cl.getClassLoader());
+
+            IModule cloudModule = (IModule) moduleClass.newInstance();
+
+            if (methode.equals("enable")) cloudModule.onEnable();
+            else cloudModule.onDisable();
+        } catch (MalformedURLException | ClassNotFoundException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadModule(String path) {
+        try (JarInputStream in = new JarInputStream(
+            new BufferedInputStream(Files.newInputStream(new File(path).toPath())))) {
+            JarEntry entry;
+
+            while ((entry = in.getNextJarEntry()) != null) {
+                if (entry.getName().equals("module-info.json")) {
+                    try (Reader pluginInfoReader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+                        JsonObject jsonObject = JsonParser.parseReader(pluginInfoReader).getAsJsonObject();
+
+                        if (loadedModuleCache.get(jsonObject.get("name").getAsString()) == null) {
+                            loadedModuleCache.put(jsonObject.get("name").getAsString(), new ILoadedModule() {
+                                @Override
+                                public String getName() {
+                                    return jsonObject.get("name").getAsString();
+                                }
+
+                                @Override
+                                public String getFileName() {
+                                    return new File(path).getName();
+                                }
+
+                                @Override
+                                public String getAuthor() {
+                                    return jsonObject.get("author").getAsString();
+                                }
+
+                                @Override
+                                public String getVersion() {
+                                    return jsonObject.get("version").getAsString();
+                                }
+
+                                @Override
+                                public String getDescription() {
+                                    return jsonObject.get("description").getAsString();
+                                }
+
+                                @Override
+                                public String getMainClass() {
+                                    return jsonObject.get("main-class").getAsString();
+                                }
+
+                                @Override
+                                public boolean isReloadable() {
+                                    return jsonObject.get("reloadable").getAsBoolean();
+                                }
+                            });
+
+                            if (System.getProperty("module-reloading") == null)
+                                Base.getInstance().getLogger().log("Loaded module '§b" + jsonObject.get("name").getAsString() + "§f' by '§b" + jsonObject.get("author").getAsString() + "§f' v" + jsonObject.get("version").getAsString() + ".", LogType.INFO);
+                            executeModule(new File(path), jsonObject.get("main-class").getAsString(), "enable");
+                            in.close();
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void unloadModule(ILoadedModule module) {
+        loadedModuleCache.remove(module.getName());
+        executeModule(new File("modules//" + module.getFileName()), module.getMainClass(), "disable");
+    }
+
+    public void reloadModule(ILoadedModule module) {
+        System.setProperty("module-reloading", "true");
+        unloadModule(module);
+        loadModule(new File("modules//" + module.getFileName()).getPath());
+        System.clearProperty("module-reloading");
+        Base.getInstance().getLogger().log("Successfully reloaded module '§b" + module.getName() + "§f'.", LogType.INFO);
+    }
+
+    @Override
+    public Optional<ILoadedModule> getModuleByName(String name) {
+        return Optional.ofNullable(loadedModuleCache.get(name));
+    }
+
+    @Override
+    public List<ILoadedModule> getAllModules() {
+        return loadedModuleCache.values().stream().toList();
+    }
+}

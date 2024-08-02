@@ -15,116 +15,139 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 /**
+ * ModuleProvider manages the loading, unloading, and reloading of modules.
+ * It keeps a cache of loaded modules and provides methods to interact with them.
+ *
  * @author TeriumCloud
  */
 public class ModuleProvider implements IModuleProvider {
 
-    private final HashMap<String, ILoadedModule> loadedModuleCache;
-
-    public ModuleProvider() {
-        this.loadedModuleCache = new HashMap<>();
-    }
+    private final Map<String, ILoadedModule> loadedModuleCache = new HashMap<>();
 
     public void loadModules() {
-        File file = new File("modules//");
-        if (!file.exists()) file.mkdirs();
-        Arrays.stream(Objects.requireNonNull(file.listFiles())).toList().stream().filter(file1 -> file1.getName().endsWith(".jar")).forEach(module -> loadModule(module.getPath()));
+        Path moduleDir = Path.of("modules");
+        if (!Files.exists(moduleDir)) {
+            try {
+                Files.createDirectories(moduleDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try (var files = Files.list(moduleDir)) {
+            files.filter(file -> file.toString().endsWith(".jar"))
+                .forEach(module -> loadModule(module.toString()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SneakyThrows
-    public void executeModule(File file, String mainClass, String methode) {
-        try {
-            Class<?> cl = new URLClassLoader(new URL[]{file.toURL()}, Thread.currentThread().getContextClassLoader()).loadClass(mainClass);
-            Class<?> moduleClass = Class.forName(mainClass, true, cl.getClassLoader());
+    public void executeModule(File file, String mainClass, String method) {
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
+            Class<?> moduleClass = Class.forName(mainClass, true, classLoader);
+            IModule cloudModule = (IModule) moduleClass.getDeclaredConstructor().newInstance();
 
-            IModule cloudModule = (IModule) moduleClass.newInstance();
-
-            if (methode.equals("enable")) cloudModule.onEnable();
-            else cloudModule.onDisable();
-        } catch (MalformedURLException | ClassNotFoundException exception) {
+            if ("enable".equals(method)) {
+                cloudModule.onEnable();
+            } else {
+                cloudModule.onDisable();
+            }
+        } catch (ReflectiveOperationException | IOException exception) {
             exception.printStackTrace();
         }
     }
 
     @Override
     public void loadModule(String path) {
-        try (JarInputStream in = new JarInputStream(
-            new BufferedInputStream(Files.newInputStream(new File(path).toPath())))) {
+        try (JarInputStream jarInputStream = new JarInputStream(Files.newInputStream(Path.of(path)))) {
             JarEntry entry;
+            while ((entry = jarInputStream.getNextJarEntry()) != null) {
+                if ("module-info.json".equals(entry.getName())) {
+                    try (Reader reader = new InputStreamReader(jarInputStream, StandardCharsets.UTF_8)) {
+                        JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                        String moduleName = jsonObject.get("name").getAsString();
 
-            while ((entry = in.getNextJarEntry()) != null) {
-                if (entry.getName().equals("module-info.json")) {
-                    try (Reader pluginInfoReader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-                        JsonObject jsonObject = JsonParser.parseReader(pluginInfoReader).getAsJsonObject();
+                        if (!loadedModuleCache.containsKey(moduleName)) {
+                            ILoadedModule module = createLoadedModule(jsonObject, path);
+                            loadedModuleCache.put(moduleName, module);
 
-                        if (loadedModuleCache.get(jsonObject.get("name").getAsString()) == null) {
-                            loadedModuleCache.put(jsonObject.get("name").getAsString(), new ILoadedModule() {
-                                @Override
-                                public String getName() {
-                                    return jsonObject.get("name").getAsString();
-                                }
-
-                                @Override
-                                public String getFileName() {
-                                    return new File(path).getName();
-                                }
-
-                                @Override
-                                public String getAuthor() {
-                                    return jsonObject.get("author").getAsString();
-                                }
-
-                                @Override
-                                public String getVersion() {
-                                    return jsonObject.get("version").getAsString();
-                                }
-
-                                @Override
-                                public String getDescription() {
-                                    return jsonObject.get("description").getAsString();
-                                }
-
-                                @Override
-                                public String getMainClass() {
-                                    return jsonObject.get("main-class").getAsString();
-                                }
-
-                                @Override
-                                public boolean isReloadable() {
-                                    return jsonObject.get("reloadable").getAsBoolean();
-                                }
-                            });
-
-                            if (System.getProperty("module-reloading") == null)
-                                Base.getInstance().getLogger().log("Loaded module '§b" + jsonObject.get("name").getAsString() + "§f' by '§b" + jsonObject.get("author").getAsString() + "§f' v" + jsonObject.get("version").getAsString() + ".", LogType.INFO);
-                            executeModule(new File(path), jsonObject.get("main-class").getAsString(), "enable");
-                            in.close();
+                            if (System.getProperty("module-reloading") == null) {
+                                Base.getInstance().getLogger().log(
+                                    String.format("Loaded module '§b%s§f' by '§b%s§f' v%s.",
+                                        moduleName,
+                                        module.getAuthor(),
+                                        module.getVersion()
+                                    ), LogType.INFO
+                                );
+                            }
+                            executeModule(new File(path), module.getMainClass(), "enable");
                             return;
                         }
                     }
                 }
             }
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private ILoadedModule createLoadedModule(JsonObject jsonObject, String path) {
+        return new ILoadedModule() {
+            @Override
+            public String getName() {
+                return jsonObject.get("name").getAsString();
+            }
+
+            @Override
+            public String getFileName() {
+                return Path.of(path).getFileName().toString();
+            }
+
+            @Override
+            public String getAuthor() {
+                return jsonObject.get("author").getAsString();
+            }
+
+            @Override
+            public String getVersion() {
+                return jsonObject.get("version").getAsString();
+            }
+
+            @Override
+            public String getDescription() {
+                return jsonObject.get("description").getAsString();
+            }
+
+            @Override
+            public String getMainClass() {
+                return jsonObject.get("main-class").getAsString();
+            }
+
+            @Override
+            public boolean isReloadable() {
+                return jsonObject.get("reloadable").getAsBoolean();
+            }
+        };
     }
 
     public void unloadModule(ILoadedModule module) {
         loadedModuleCache.remove(module.getName());
-        executeModule(new File("modules//" + module.getFileName()), module.getMainClass(), "disable");
+        executeModule(new File("modules", module.getFileName()), module.getMainClass(), "disable");
     }
 
     public void reloadModule(ILoadedModule module) {
         System.setProperty("module-reloading", "true");
         unloadModule(module);
-        loadModule(new File("modules//" + module.getFileName()).getPath());
+        loadModule(Path.of("modules", module.getFileName()).toString());
         System.clearProperty("module-reloading");
-        Base.getInstance().getLogger().log("Successfully reloaded module '§b" + module.getName() + "§f'.", LogType.INFO);
+        Base.getInstance().getLogger().log(String.format("Successfully reloaded module '§b%s§f'.", module.getName()), LogType.INFO);
     }
 
     @Override
@@ -134,6 +157,6 @@ public class ModuleProvider implements IModuleProvider {
 
     @Override
     public List<ILoadedModule> getAllModules() {
-        return loadedModuleCache.values().stream().toList();
+        return new ArrayList<>(loadedModuleCache.values());
     }
 }

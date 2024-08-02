@@ -113,9 +113,9 @@ public class LocalService implements CloudService {
             configureWaterdog();
         } else if (group.getGameServerVersion() == GameServerVersion.NUKKIT){
             configureNukkit();
-        } else if (group.getGameServerVersion() == GameServerVersion.JUKEBOXMC) {
+        } /* else if (group.getGameServerVersion() == GameServerVersion.JUKEBOXMC) {
             configureJukebox();
-        }
+        }*/
     }
 
     private void configureWaterdog() throws IOException {

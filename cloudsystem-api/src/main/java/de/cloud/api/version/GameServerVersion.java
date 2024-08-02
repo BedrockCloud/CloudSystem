@@ -20,9 +20,9 @@ public final class GameServerVersion {
         "nukkit", "1.0-SNAPSHOT", false, "https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar"
     );
 
-    public static final GameServerVersion JUKEBOXMC = new GameServerVersion(
+    /* public static final GameServerVersion JUKEBOXMC = new GameServerVersion(
         "JukeboxMC-Server", "1.0.0-SNAPSHOT-all", false, ""
-    );
+    ); */
 
     private final String url;
     private final String title;

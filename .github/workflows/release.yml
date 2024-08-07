@@ -1,0 +1,39 @@
+name: Create Release
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up JDK
+              uses: actions/setup-java@v3
+              with:
+                  distribution: 'temurin'
+                  java-version: '17'
+
+            - name: Extract version from pom.xml
+              id: extract_version
+              run: |
+                  version=$(xmllint --xpath "string(//project/version)" pom.xml)
+                  echo "::set-output name=version::${version%-RELEASE}"
+
+            - name: Create GitHub Release
+              if: contains(github.event.head_commit.message, 'Release ')
+              uses: actions/create-release@v1
+              with:
+                  tag_name: v${{ steps.extract_version.outputs.version }}
+                  release_name: ${{ steps.extract_version.outputs.version }}
+                  body: |
+                      Release of version ${{ steps.extract_version.outputs.version }}
+                  draft: false
+                  prerelease: false
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

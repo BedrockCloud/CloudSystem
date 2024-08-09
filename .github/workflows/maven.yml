@@ -24,9 +24,7 @@ jobs:
                   cache: maven
             - name: Build with Maven
               run: mvn install -f pom.xml
-            - name: Create tmp directory
-              run: mkdir tmp && cp cloudsystem-loader/target/cloudsystem.jar tmp
             - uses: actions/upload-artifact@v4
               with:
                   name: BedrockCloud
-                  path: tmp
+                  path: cloudsystem-loader/target

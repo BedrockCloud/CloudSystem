@@ -24,6 +24,8 @@ jobs:
                   cache: maven
             - name: Build with Maven
               run: mvn install -f pom.xml
+            - name: Build with Maven x2
+              run: mvn install -f pom.xml
             - uses: actions/upload-artifact@v4
               with:
                   name: BedrockCloud

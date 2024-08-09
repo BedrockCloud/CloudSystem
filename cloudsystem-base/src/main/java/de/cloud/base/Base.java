@@ -39,6 +39,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -236,29 +238,36 @@ public final class Base extends CloudAPI {
     public void onShutdown() {
         if (!running) return;
         running = false;
+
         logger.log("§7Trying to terminate the §bcloudsystem§7.");
-        ((SimpleLogger) logger).getConsoleManager().shutdownReading();
+        SimpleLogger simpleLogger = (SimpleLogger) logger;
+        simpleLogger.getConsoleManager().shutdownReading();
+
         serviceManager.getAllCachedServices().stream()
-            .filter(service -> service instanceof LocalService)
-            .map(service -> (LocalService) service)
+            .filter(LocalService.class::isInstance)
+            .map(LocalService.class::cast)
             .forEach(LocalService::stop);
 
         try {
-            // Delete wrapper and plugin jars
-            Files.deleteIfExists(((SimpleServiceManager) serviceManager).getWrapperPath());
-            Files.deleteIfExists(((SimpleServiceManager) serviceManager).getPluginPath());
+            SimpleServiceManager simpleServiceManager = (SimpleServiceManager) serviceManager;
+            Path wrapperPath = simpleServiceManager.getWrapperPath();
+            Path pluginPath = simpleServiceManager.getPluginPath();
 
-            // Delete temporary directory
-            FileUtils.deleteDirectory(new File("tmp"));
+            Files.deleteIfExists(wrapperPath);
+            Files.deleteIfExists(pluginPath);
+
+            FileUtils.deleteDirectory(Paths.get("tmp").toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log("§cError during shutdown: " + e.getMessage(), LogType.ERROR);
         }
 
         node.close();
         databaseManager.close();
         logger.log("§aSuccessfully §7stopped the §bcloudsystem§7.", LogType.SUCCESS);
+
         System.exit(0);
     }
+
 
     @Override
     public Logger getLogger() {

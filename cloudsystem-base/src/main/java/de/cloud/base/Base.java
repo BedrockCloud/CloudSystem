@@ -119,7 +119,8 @@ public final class Base extends CloudAPI {
             new InfoCommand(),
             new ServiceCommand(),
             new ShutdownCommand(),
-            new ScreenCommand()
+            new ScreenCommand(),
+            new ModulesCommand()
         );
 
         // Add a shutdown hook

@@ -7,21 +7,12 @@ import lombok.Getter;
 @Getter
 public enum LogType {
 
-    SUCCESS("SUCCESS", "§a"),
-    INFO("INFO", "§b"),
-    ERROR("ERROR", "§c"),
-    WARNING("WARNING", "§6"),
-    EMPTY("", "");
+    SUCCESS("§aSUCCESS§7"),
+    INFO("§bINFO§7"),
+    ERROR("§cERROR§7"),
+    WARNING("§6WARNING§7"),
+    EMPTY("");
 
-    private final String name;
-    private final String colorCode;
+    private final String textField;
 
-    @Override
-    public String toString() {
-        return String.format("%s%s§7", colorCode, name);
-    }
-
-    public String format(String message) {
-        return String.format("%s: %s", this.toString(), message);
-    }
 }

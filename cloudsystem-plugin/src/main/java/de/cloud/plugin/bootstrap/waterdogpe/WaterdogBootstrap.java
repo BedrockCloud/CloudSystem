@@ -65,6 +65,7 @@ public final class WaterdogBootstrap extends Plugin {
     public @NotNull Optional<CloudService> getFallback(final ProxiedPlayer player) {
         return CloudAPI.getInstance().getServiceManager().getAllCachedServices().stream()
             .filter(service -> service.getState().equals(ServiceState.ONLINE))
+            .filter(service -> !service.getState().equals(ServiceState.HIDDEN))
             .filter(service -> !service.getGroup().getGameServerVersion().isProxy())
             .filter(service -> service.getGroup().isFallbackGroup())
             .filter(service -> (player.getServerInfo() == null || !player.getServerInfo().getServerName().equals(service.getName())))

@@ -36,7 +36,9 @@ public final class SimpleLogger implements Logger {
             var currentTime = LocalTime.now().format(timeFormatter);
             var separator = this.isWindows() ? "|" : "┃";
             var indicator = this.isWindows() ? ">" : "»";
-            message = String.format(" %s §7%s §r%s %s §r%s§r", currentTime, separator, logType.getTextField(), indicator, message);
+            message = String.format(" %s §7%s §r%s %s §r%s§r",
+                currentTime, separator, logType.format(indicator), logType.getName(), message);
+
         }
         return LoggerAnsiFactory.toColorCode(message);
     }

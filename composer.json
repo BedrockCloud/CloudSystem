@@ -1,7 +1,6 @@
 {
     "name": "bedrockcloud/cloudsystem",
     "description": "CloudSystem for Minecraft BedrockEdition",
-    "version": "2.0.0",
     "license": ["Apache-2.0"],
     "require": {
         "pocketmine/snooze": "^0.5.0",
@@ -11,7 +10,7 @@
         "ext-igbinary": "^3.0.1",
         "ext-yaml": ">=2.0.0",
         "ext-pcntl": "*",
-        "phpunit/phpunit": "11.4.3"
+        "phpunit/phpunit": "^11.4.3"
     },
     "scripts": {
         "test": "vendor/bin/phpunit"

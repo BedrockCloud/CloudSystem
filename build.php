@@ -25,7 +25,7 @@ if ($result_code != 0) throw new ErrorException("Error while updated autoloader.
 $loader = include_once __DIR__ . "/vendor/autoload.php";
 $startTime = microtime(true);
 $from = getcwd() . DIRECTORY_SEPARATOR;
-$description = yaml_parse_file($from . "plugin.yml");
+$description = yaml_parse_file($from . "version.yml");
 $to = __DIR__ . DIRECTORY_SEPARATOR . "out" . DIRECTORY_SEPARATOR . $description["name"] . DIRECTORY_SEPARATOR;
 $outputPath = $from . "out" . DIRECTORY_SEPARATOR . $description["name"] . ($enable_version_suffix
         ? "_v" . $description["version"] : "");

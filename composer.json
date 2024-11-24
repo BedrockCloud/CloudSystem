@@ -1,0 +1,11 @@
+{
+    "require": {
+        "pocketmine/snooze": "^0.5.0",
+        "ext-pmmpthread": "*",
+        "ext-sockets": "*",
+        "ext-curl": "*",
+        "ext-igbinary": "*",
+        "ext-yaml": "*",
+        "ext-pcntl": "*"
+    }
+}

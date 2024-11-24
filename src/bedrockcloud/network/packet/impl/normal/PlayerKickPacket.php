@@ -1,0 +1,38 @@
+<?php
+
+namespace bedrockcloud\network\packet\impl\normal;
+
+use bedrockcloud\network\client\ServerClient;
+use bedrockcloud\network\packet\CloudPacket;
+use bedrockcloud\network\packet\utils\PacketData;
+use bedrockcloud\player\CloudPlayerManager;
+
+class PlayerKickPacket extends CloudPacket {
+
+    public function __construct(
+        private string $playerName = "",
+        private string $reason = ""
+    ) {}
+
+    public function encodePayload(PacketData $packetData): void {
+        $packetData->write($this->playerName);
+        $packetData->write($this->reason);
+    }
+
+    public function decodePayload(PacketData $packetData): void {
+        $this->playerName = $packetData->readString();
+        $this->reason = $packetData->readString();
+    }
+
+    public function getPlayerName(): string {
+        return $this->playerName;
+    }
+
+    public function getReason(): string {
+        return $this->reason;
+    }
+
+    public function handle(ServerClient $client): void {
+        if (($player = CloudPlayerManager::getInstance()->getPlayerByName($this->playerName)) !== null) $player->kick($this->reason);
+    }
+}

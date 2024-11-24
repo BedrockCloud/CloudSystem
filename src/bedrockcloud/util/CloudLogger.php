@@ -1,0 +1,29 @@
+<?php
+
+namespace bedrockcloud\util;
+
+use bedrockcloud\config\impl\DefaultConfig;
+use bedrockcloud\console\log\Logger;
+use Throwable;
+
+final class CloudLogger {
+
+    private static ?Logger $logger = null;
+
+    public static function set(?Logger $logger): void {
+        self::$logger = $logger;
+    }
+
+    public static function get(): Logger {
+        try {
+            if (self::$logger === null) self::set(new Logger(LOG_PATH, DefaultConfig::getInstance()->isDebugMode()));
+        } catch (Throwable) {
+            self::set(new Logger(LOG_PATH, true));
+        }
+        return self::$logger;
+    }
+
+    public static function close(): void {
+        self::$logger?->close();
+    }
+}

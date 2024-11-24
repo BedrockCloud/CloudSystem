@@ -1,0 +1,26 @@
+<?php
+
+namespace bedrockcloud\network\packet\impl\normal;
+
+use bedrockcloud\network\client\ServerClient;
+use bedrockcloud\network\packet\CloudPacket;
+use bedrockcloud\network\packet\utils\PacketData;
+
+class CloudNotifyPacket extends CloudPacket {
+
+    public function __construct(private string $message = "") {}
+
+    public function encodePayload(PacketData $packetData): void {
+        $packetData->write($this->message);
+    }
+
+    public function decodePayload(PacketData $packetData): void {
+        $this->message = $packetData->readString();
+    }
+
+    public function getMessage(): string {
+        return $this->message;
+    }
+
+    public function handle(ServerClient $client): void {}
+}

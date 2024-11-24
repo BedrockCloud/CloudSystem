@@ -1,0 +1,36 @@
+<?php
+
+namespace bedrockcloud\network\packet\impl\normal;
+
+use bedrockcloud\network\client\ServerClient;
+use bedrockcloud\network\packet\CloudPacket;
+use bedrockcloud\network\packet\utils\PacketData;
+use bedrockcloud\player\CloudPlayer;
+
+class PlayerSyncPacket extends CloudPacket {
+
+    public function __construct(
+        private ?CloudPlayer $player = null,
+        private bool $removal = false
+    ) {}
+
+    public function encodePayload(PacketData $packetData): void {
+        $packetData->writePlayer($this->player);
+        $packetData->write($this->removal);
+    }
+
+    public function decodePayload(PacketData $packetData): void {
+        $this->player = $packetData->readPlayer();
+        $this->removal = $packetData->readBool();
+    }
+
+    public function getPlayer(): ?CloudPlayer {
+        return $this->player;
+    }
+
+    public function isRemoval(): bool {
+        return $this->removal;
+    }
+
+    public function handle(ServerClient $client): void {}
+}

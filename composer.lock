@@ -1,0 +1,65 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "9ca6195d9f205e82758cafdc13cdfb9e",
+    "packages": [
+        {
+            "name": "pocketmine/snooze",
+            "version": "0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pmmp/Snooze.git",
+                "reference": "a86d9ee60ce44755d166d3c7ba4b8b8be8360915"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pmmp/Snooze/zipball/a86d9ee60ce44755d166d3c7ba4b8b8be8360915",
+                "reference": "a86d9ee60ce44755d166d3c7ba4b8b8be8360915",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pmmpthread": "^6.0",
+                "php-64bit": "^8.1"
+            },
+            "require-dev": {
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "1.10.3",
+                "phpstan/phpstan-strict-rules": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "pocketmine\\snooze\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "description": "Thread notification management library for code using the pthreads extension",
+            "support": {
+                "issues": "https://github.com/pmmp/Snooze/issues",
+                "source": "https://github.com/pmmp/Snooze/tree/0.5.0"
+            },
+            "time": "2023-05-22T23:43:01+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "ext-pmmpthread": "*",
+        "ext-sockets": "*",
+        "ext-curl": "*",
+        "ext-igbinary": "*",
+        "ext-yaml": "*"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}

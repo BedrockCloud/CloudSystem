@@ -1,5 +1,5 @@
 {
-    "name": "bedrockcloud",
+    "name": "bedrockcloud/cloudsystem",
     "description": "CloudSystem for Minecraft BedrockEdition",
     "require": {
         "pocketmine/snooze": "^0.5.0",

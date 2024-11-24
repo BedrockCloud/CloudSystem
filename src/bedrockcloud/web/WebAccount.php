@@ -50,8 +50,8 @@ final class WebAccount {
     public function toArray(): array {
         return [
             "username" => $this->name,
-            "password" => $this->password,
-            "initialPassword" => $this->initialPassword,
+            "password" => password_hash($this->password, PASSWORD_DEFAULT),
+            "initialPassword" => password_hash($this->initialPassword, PASSWORD_DEFAULT),
             "role" => $this->role->roleName()
         ];
     }

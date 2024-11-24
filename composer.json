@@ -1,13 +1,14 @@
 {
     "name": "bedrockcloud/cloudsystem",
     "description": "CloudSystem for Minecraft BedrockEdition",
+    "version": "2.0.0",
     "require": {
         "pocketmine/snooze": "^0.5.0",
-        "ext-pmmpthread": "*",
+        "ext-pmmpthread": "^6.1.0",
         "ext-sockets": "*",
         "ext-curl": "*",
-        "ext-igbinary": "*",
-        "ext-yaml": "*",
+        "ext-igbinary": "^3.0.1",
+        "ext-yaml": ">=2.0.0",
         "ext-pcntl": "*",
         "phpunit/phpunit": "*"
     },

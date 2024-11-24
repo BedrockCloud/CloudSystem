@@ -6,6 +6,10 @@
         "ext-curl": "*",
         "ext-igbinary": "*",
         "ext-yaml": "*",
-        "ext-pcntl": "*"
+        "ext-pcntl": "*",
+        "phpunit/phpunit": "*"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

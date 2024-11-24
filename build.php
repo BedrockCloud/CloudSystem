@@ -11,7 +11,7 @@ ini_set("memory_limit", "-1");
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 $localServerPath = "C:/Users/" . getenv("USERNAME") . "/Desktop/pmmp5"; // string|null
-$NAMESPACE = "bedrockcloud/BedrockCloud";
+$NAMESPACE = "";
 $packages = [
 ];
 $encode = false;
@@ -41,7 +41,7 @@ if (is_file($from . "README.md"))
     file_put_contents($to . "README.md", file_get_contents($from . "README.md"));
 if (is_dir($from . "resources"))
     copyDirectory($from . "resources", $to . "resources");
-yaml_emit_file($to . "plugin.yml", $description);
+yaml_emit_file($to . "version.yml", $description);
 // include all packages
 foreach ($packages as $vendor => $obj) {
     if (str_ends_with($vendor, "/")) $vendor = substr($vendor, 0, -1);
@@ -60,20 +60,8 @@ foreach ($packages as $vendor => $obj) {
         $excluded[] = $vendor . "/";
 }
 echo "[INFO]: Encoding plugin.." . PHP_EOL;
-if ($encode) {
-    echo "[INFO]: Encoding plugin.." . PHP_EOL;
-    require_once "vendor/xxflorii/plugin-security/src/Encoder.php";
-    (new \xxAROX\PluginSecurity\Encoder($to, $excluded))->encode();
-    echo "[INFO]: Encoding done!" . PHP_EOL;
-    $to = $to . "/output";
-}
-echo "[INFO]: Encoding done!" . PHP_EOL;
 generatePhar($outputPath, $to);
-if (!empty($localServerPath) && is_dir($localServerPath . "/plugins")) {
-    echo "[INFO]: Compiling.." . PHP_EOL;
-    generatePhar($localServerPath . "/plugins/" . $description["name"] . ($enable_version_suffix
-            ? "_v" . $description["version"] : ""), $to);
-}
+
 /**
  * Function copyDirectory
  * @param string $from

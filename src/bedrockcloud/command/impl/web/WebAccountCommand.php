@@ -44,7 +44,7 @@ class WebAccountCommand extends Command {
                 }
 
                 $role = (isset($args[1]) ? (WebAccountRoles::from($args[1]) ?? WebAccountRoles::DEFAULT) : WebAccountRoles::DEFAULT);
-                WebAccountManager::getInstance()->createAccount(new WebAccount($name, ($initPassword = Utils::generateString(6)), true, $role));
+                WebAccountManager::getInstance()->createAccount(new WebAccount($name, password_hash($initPassword = Utils::generateString(6), PASSWORD_BCRYPT), true, $role));
                 $sender->info(Language::current()->translate("webaccount.created", $name, $initPassword));
             } else if ($subCommand == "remove") {
                 if (count($args) == 0) {
@@ -76,7 +76,7 @@ class WebAccountCommand extends Command {
                 }
 
                 if ($action == "password") {
-                    WebAccountManager::getInstance()->updateAccount($account, $value, null);
+                    WebAccountManager::getInstance()->updateAccount($account, password_hash($value, PASSWORD_BCRYPT), null);
                     $sender->info(Language::current()->translate("webaccount.password.updated"));
                 } else if ($action == "role") {
                     if (($role = WebAccountRoles::from($value)) !== null) {

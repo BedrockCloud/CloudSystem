@@ -21,6 +21,7 @@ use bedrockcloud\http\endpoint\impl\plugin\CloudPluginListEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerExecuteEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerGetEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerListEndPoint;
+use bedrockcloud\http\endpoint\impl\server\CloudServerLogsEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerSaveEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerStartEndPoint;
 use bedrockcloud\http\endpoint\impl\server\CloudServerStopEndPoint;
@@ -46,7 +47,7 @@ final class EndpointRegistry {
             new CloudPlayerGetEndPoint(), new CloudPlayerTextEndPoint(), new CloudPlayerKickEndPoint(), new CloudPlayerListEndPoint(),
             new CloudPluginGetEndPoint(), new CloudPluginEnableEndPoint(), new CloudPluginDisableEndPoint(), new CloudPluginListEndPoint(),
             new CloudTemplateCreateEndPoint(), new CloudTemplateRemoveEndPoint(), new CloudTemplateGetEndPoint(), new CloudTemplateListEndPoint(), new CloudTemplateEditEndPoint(),
-            new CloudServerStartEndPoint(), new CloudServerStopEndPoint(), new CloudServerSaveEndPoint(), new CloudServerExecuteEndPoint(), new CloudServerGetEndPoint(), new CloudServerListEndPoint(),
+            new CloudServerStartEndPoint(), new CloudServerStopEndPoint(), new CloudServerSaveEndPoint(), new CloudServerExecuteEndPoint(), new CloudServerGetEndPoint(), new CloudServerListEndPoint(), new CloudServerLogsEndPoint(),
             new ModuleGetEndPoint(), new ModuleListEndPoint(), new ModuleEditEndPoint(),
             new MaintenanceAddEndPoint(), new MaintenanceRemoveEndPoint(), new MaintenanceGetEndPoint(), new MaintenanceListEndPoint()
         ];

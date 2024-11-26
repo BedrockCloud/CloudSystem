@@ -16,7 +16,7 @@ class CloudServerLogsEndPoint extends EndPoint {
 
     public function handleRequest(Request $request, Response $response): array {
         $serverName = $request->data()->queries()->get("server");
-        $logType = (int)$request->data()->queries()->get("type", 0); // 0 = main log, 1 = detailed log
+        $logType = (int)$request->data()->queries()->get("type", 0);
 
         if ((CloudServerManager::getInstance()->getServerByName($serverName)) === null) {
             return ["error" => "Server not found"];

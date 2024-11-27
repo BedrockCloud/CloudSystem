@@ -11,25 +11,59 @@ use bedrockcloud\template\TemplateManager;
 class EditCommand extends Command {
 
     public function execute(ICommandSender $sender, string $label, array $args): bool {
-        if (isset($args[0]) && isset($args[1]) && isset($args[2])) {
-            if (($template = TemplateManager::getInstance()->getTemplateByName($args[0])) !== null) {
-                if (TemplateHelper::isValidEditKey($args[1])) {
-                    if (TemplateHelper::isValidEditValue($args[2], $args[1], $expected, $realValue)) {
-                        TemplateManager::getInstance()->editTemplate(
-                            $template,
-                            ($args[1] == "lobby" ? $realValue : null),
-                            ($args[1] == "maintenance" ? $realValue : null),
-                            ($args[1] == "static" ? $realValue : null),
-                            ($args[1] == "maxPlayerCount" ? $realValue : null),
-                            ($args[1] == "minServerCount" ? $realValue : null),
-                            ($args[1] == "maxServerCount" ? $realValue : null),
-                            ($args[1] == "startNewWhenFull" ? $realValue : null),
-                            ($args[1] == "autoStart" ? $realValue : null),
-                        );
-                    } else $sender->error(Language::current()->translate("command.edit.failed.second", $args[1], $expected));
-                } else $sender->error(Language::current()->translate("command.edit.failed.first"));
-            } else $sender->error(Language::current()->translate("template.not.found"));
-        } else return false;
+        if (count($args) < 3) {
+            return false;
+        }
+
+        [$templateName, $editKey, $editValue] = $args;
+
+        $template = TemplateManager::getInstance()->getTemplateByName($templateName);
+        if ($template === null) {
+            $sender->error(Language::current()->translate("template.not.found"));
+            return true;
+        }
+
+        if (!TemplateHelper::isValidEditKey($editKey)) {
+            $sender->error(Language::current()->translate("command.edit.failed.first"));
+            return true;
+        }
+
+        if (!TemplateHelper::isValidEditValue($editValue, $editKey, $expected, $realValue)) {
+            $sender->error(Language::current()->translate(
+                "command.edit.failed.second",
+                $editKey,
+                $expected
+            ));
+            return true;
+        }
+
+        $editFields = [
+            "lobby" => null,
+            "maintenance" => null,
+            "static" => null,
+            "maxPlayerCount" => null,
+            "minServerCount" => null,
+            "maxServerCount" => null,
+            "startNewWhenFull" => null,
+            "autoStart" => null,
+        ];
+
+        if (array_key_exists($editKey, $editFields)) {
+            $editFields[$editKey] = $realValue;
+        }
+
+        TemplateManager::getInstance()->editTemplate(
+            $template,
+            $editFields["lobby"],
+            $editFields["maintenance"],
+            $editFields["static"],
+            $editFields["maxPlayerCount"],
+            $editFields["minServerCount"],
+            $editFields["maxServerCount"],
+            $editFields["startNewWhenFull"],
+            $editFields["autoStart"]
+        );
+
         return true;
     }
 }

@@ -10,16 +10,40 @@ use bedrockcloud\plugin\CloudPluginManager;
 class PluginsCommand extends Command {
 
     public function execute(ICommandSender $sender, string $label, array $args): bool {
-        $sender->info("Plugins §8(§e" . count(CloudPluginManager::getInstance()->getPlugins()) . "§8)§r:");
-        if (empty(CloudPluginManager::getInstance()->getPlugins())) $sender->info(Language::current()->translate("command.plugins.none"));
-        foreach (CloudPluginManager::getInstance()->getPlugins() as $plugin) {
-            $sender->info("Name: §e" . $plugin->getDescription()->getName());
-            if ($plugin->getDescription()->getDescription() !== null) $sender->info(Language::current()->translate("raw.description") . ": §e" . $plugin->getDescription()->getDescription());
-            $sender->info("Version: §ev" . $plugin->getDescription()->getVersion());
-            if (!empty($plugin->getDescription()->getAuthors())) $sender->info(Language::current()->translate("raw.author") . ": §e" . implode(", ", $plugin->getDescription()->getAuthors()));
-            $sender->info("FullName: §e" . $plugin->getDescription()->getFullName());
-            $sender->info(Language::current()->translate("raw.enabled") . ": " . ($plugin->isEnabled() ? "§a" . Language::current()->translate("raw.yes") : "§c" . Language::current()->translate("raw.no")));
+        $pluginManager = CloudPluginManager::getInstance();
+        $plugins = $pluginManager->getPlugins();
+        $pluginCount = count($plugins);
+
+        $sender->info("Plugins §8(§e{$pluginCount}§8)§r:");
+
+        if (empty($plugins)) {
+            $sender->info(Language::current()->translate("command.plugins.none"));
+            return true;
         }
+
+        foreach ($plugins as $plugin) {
+            $description = $plugin->getDescription();
+            $sender->info("Name: §e" . $description->getName());
+
+            if ($description->getDescription() !== null) {
+                $sender->info(Language::current()->translate("raw.description") . ": §e" . $description->getDescription());
+            }
+
+            $sender->info("Version: §ev" . $description->getVersion());
+
+            if (!empty($description->getAuthors())) {
+                $sender->info(Language::current()->translate("raw.author") . ": §e" . implode(", ", $description->getAuthors()));
+            }
+
+            $sender->info("FullName: §e" . $description->getFullName());
+            $sender->info(Language::current()->translate("raw.enabled") . ": " .
+                ($plugin->isEnabled()
+                    ? "§a" . Language::current()->translate("raw.yes")
+                    : "§c" . Language::current()->translate("raw.no")
+                )
+            );
+        }
+
         return true;
     }
 }

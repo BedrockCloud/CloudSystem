@@ -38,6 +38,9 @@ final class HttpServer extends Thread implements Reloadable {
         $this->buffer = new ThreadSafeArray();
     }
 
+    /**
+     * Handles the server's running process.
+     */
     public function onRun(): void {
         while ($this->connected) {
             try {
@@ -55,10 +58,22 @@ final class HttpServer extends Thread implements Reloadable {
         }
     }
 
+    /**
+     * Sets a custom handler for invalid URLs.
+     *
+     * @param Closure $closure The custom handler
+     */
     public function default(Closure $closure): void {
         $this->invalidUrlHandler = $closure;
     }
 
+    /**
+     * Processes an incoming HTTP request and generates a response.
+     *
+     * @param Address $address The client's address
+     * @param string $request The request data
+     * @return string The generated response
+     */
     private function handleRequest(Address $address, string $request): string {
         try {
             $parsedRequest = HttpUtils::parseRequest($address, $request);
@@ -81,6 +96,9 @@ final class HttpServer extends Thread implements Reloadable {
         }
     }
 
+    /**
+     * Initializes the server.
+     */
     public function init(): void {
         if (DefaultConfig::getInstance()->isHttpServerEnabled()) {
             (new HttpServerInitializeEvent())->call();
@@ -124,6 +142,11 @@ final class HttpServer extends Thread implements Reloadable {
         }
     }
 
+    /**
+     * Binds the server to the provided address and port.
+     *
+     * @return bool True if the binding was successful, otherwise false
+     */
     public function bind(): bool {
         try {
             $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -142,6 +165,11 @@ final class HttpServer extends Thread implements Reloadable {
         }
     }
 
+    /**
+     * Accepts a client connection.
+     *
+     * @return SocketClient|null The client connection, or null if no client
+     */
     public function accept(): ?SocketClient {
         if (!$this->connected) {
             return null;
@@ -159,6 +187,9 @@ final class HttpServer extends Thread implements Reloadable {
         return null;
     }
 
+    /**
+     * Closes the server connection.
+     */
     public function close(): void {
         if (!$this->connected) {
             return;
@@ -171,6 +202,11 @@ final class HttpServer extends Thread implements Reloadable {
         }
     }
 
+    /**
+     * Reloads the HTTP server.
+     *
+     * @return bool Always returns true
+     */
     public function reload(): bool {
         if (DefaultConfig::getInstance()->isHttpServerEnabled() && !$this->connected) {
             if ($this->isRunning()) {
@@ -182,6 +218,11 @@ final class HttpServer extends Thread implements Reloadable {
         return true;
     }
 
+    /**
+     * Gets the address the server is bound to.
+     *
+     * @return Address The server address
+     */
     public function getAddress(): Address {
         return $this->address;
     }

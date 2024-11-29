@@ -11,6 +11,8 @@ use bedrockcloud\network\packet\impl\normal\ConsoleTextPacket;
 use bedrockcloud\network\packet\impl\normal\LibrarySyncPacket;
 use bedrockcloud\network\packet\impl\normal\ModuleSyncPacket;
 use bedrockcloud\network\packet\impl\normal\PlayerTransferPacket;
+use bedrockcloud\network\packet\impl\request\CheckPlayerExistsRequestPacket;
+use bedrockcloud\network\packet\impl\response\CheckPlayerExistsResponsePacket;
 use bedrockcloud\util\Utils;
 use bedrockcloud\network\packet\CloudPacket;
 use bedrockcloud\network\packet\impl\normal\CloudServerSavePacket;
@@ -77,6 +79,8 @@ final class PacketPool {
         $this->registerPacket(CheckPlayerMaintenanceResponsePacket::class);
         $this->registerPacket(CheckPlayerNotifyRequestPacket::class);
         $this->registerPacket(CheckPlayerNotifyResponsePacket::class);
+        $this->registerPacket(CheckPlayerExistsRequestPacket::class);
+        $this->registerPacket(CheckPlayerExistsResponsePacket::class);
         $this->registerPacket(CloudNotifyPacket::class);
         $this->registerPacket(ModuleSyncPacket::class);
         $this->registerPacket(LibrarySyncPacket::class);

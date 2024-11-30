@@ -20,6 +20,7 @@ final class CloudPlayer {
     public function __construct(
         private readonly string $name,
         private readonly string $host,
+        private readonly string $address,
         private readonly string $xboxUserId,
         private readonly string $uniqueId,
         private ?string $currentServer = null,
@@ -32,6 +33,14 @@ final class CloudPlayer {
 
     public function getHost(): string {
         return $this->host;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress(): string
+    {
+        return $this->address;
     }
 
     public function getXboxUserId(): string {
@@ -106,6 +115,7 @@ final class CloudPlayer {
         return [
             "name" => $this->name,
             "host" => $this->host,
+            "address" => $this->address,
             "xboxUserId" => $this->xboxUserId,
             "uniqueId" => $this->uniqueId,
             "currentServer" => $this->getCurrentServerName(),
@@ -114,10 +124,11 @@ final class CloudPlayer {
     }
 
     public static function fromArray(array $player): ?self {
-        if (!Utils::containKeys($player, "name", "host", "xboxUserId", "uniqueId")) return null;
+        if (!Utils::containKeys($player, "name", "host", "address", "xboxUserId", "uniqueId")) return null;
         return new CloudPlayer(
             $player["name"],
             $player["host"],
+            $player["address"],
             $player["xboxUserId"],
             $player["uniqueId"],
             (!isset($player["currentServer"]) ? null : $player["currentServer"]),
